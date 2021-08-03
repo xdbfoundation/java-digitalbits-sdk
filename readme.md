@@ -1,7 +1,19 @@
 # java-digitalbits-sdk
 
-The Java DigitalBits Sdk library provides APIs to build transactions and connect to [Frontier](https://github.com/xdbfoundation/go).
+The Java DigitalBits Sdk library provides APIs to build transactions and connect to [Frontier](https://github.com/xdbfoundation/go)
 
+
+## Use with Gradle
+
+Add to the `build.gradle`
+
+        repositories {
+            maven { url "https://jitpack.io" }
+        }
+
+        dependencies {
+            implementation 'com.github.xdbfoundation:java-digitalbits-sdk:0.26.0'
+        }
 
 ### JAR
 
@@ -9,6 +21,9 @@ Download the latest jar from the GitHub repo's [releases tab](https://github.com
 
 ## Basic Usage
 For some examples on how to use this library, take a look at the [Get Started docs in the developers site](https://developers.digitalbits.io/guides/get-started/create-account.html).
+
+## Examples 
+See [examples](./examples/README.md) directory for simple Java project setup and library usage.
 
 ## Documentation
 Javadoc is available at https://xdbfoundation.github.io/java-digitalbits-sdk
