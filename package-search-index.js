@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"io.digitalbits.sdk"},{"l":"io.digitalbits.sdk.federation"},{"l":"io.digitalbits.sdk.requests"},{"l":"io.digitalbits.sdk.responses"},{"l":"io.digitalbits.sdk.responses.effects"},{"l":"io.digitalbits.sdk.responses.operations"},{"l":"io.digitalbits.sdk.xdr"}]
