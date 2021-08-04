@@ -1,6 +1,6 @@
 1. Setup basic project structure with Gradle. Run command:
 
-    gradle init
+        gradle init
 
 Choose Application when asked for project type to generate. Everything else is ok to be default.
 
