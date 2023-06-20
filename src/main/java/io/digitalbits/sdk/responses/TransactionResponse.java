@@ -2,9 +2,10 @@ package io.digitalbits.sdk.responses;
 
 import com.google.common.base.Optional;
 import com.google.gson.annotations.SerializedName;
-
+import lombok.Value;
 import io.digitalbits.sdk.Memo;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -48,16 +49,18 @@ public class TransactionResponse extends Response implements Pageable {
   private List<String> signatures;
   @SerializedName("fee_bump_transaction")
   private FeeBumpTransaction feeBumpTransaction;
+  @SerializedName("preconditions")
+  private Preconditions preconditions;
   @SerializedName("inner_transaction")
   private InnerTransaction innerTransaction;
   @SerializedName("account_muxed")
   private String accountMuxed;
   @SerializedName("account_muxed_id")
-  private Long accountMuxedId;
+  private BigInteger accountMuxedId;
   @SerializedName("fee_account_muxed")
   private String feeAccountMuxed;
   @SerializedName("fee_account_muxed_id")
-  private Long feeAccountMuxedId;
+  private BigInteger feeAccountMuxedId;
   @SerializedName("_links")
   private Links links;
 
@@ -111,6 +114,10 @@ public class TransactionResponse extends Response implements Pageable {
     return Optional.fromNullable(this.innerTransaction);
   }
 
+  public Optional<Preconditions> getPreconditions() {
+    return Optional.fromNullable(this.preconditions);
+  }
+
   public String getPagingToken() {
     return pagingToken;
   }
@@ -161,6 +168,41 @@ public class TransactionResponse extends Response implements Pageable {
 
   public Links getLinks() {
     return links;
+  }
+
+  /**
+   * Preconditions of a transaction per <a href="https://github.com/xdbfoundation/digitalbits-protocol/blob/master/core/cap-0021.md#specification">CAP-21<a/>
+   */
+  @Value
+  public static class Preconditions {
+    @SerializedName("timebounds")
+    TimeBounds timeBounds;
+    @SerializedName("ledgerbounds")
+    LedgerBounds ledgerBounds;
+    @SerializedName("min_account_sequence")
+    Long minAccountSequence;
+    @SerializedName("min_account_sequence_age")
+    long minAccountSequenceAge;
+    @SerializedName("min_account_sequence_ledger_gap")
+    long minAccountSequenceLedgerGap;
+    @SerializedName("extra_signers")
+    List<String> signatures;
+
+    @Value
+    public static class TimeBounds {
+      @SerializedName("min_time")
+      long minTime;
+      @SerializedName("max_time")
+      long maxTime;
+    }
+
+    @Value
+    public static class LedgerBounds {
+      @SerializedName("min_ledger")
+      long minTime;
+      @SerializedName("max_ledger")
+      long maxTime;
+    }
   }
 
   /**

@@ -216,6 +216,13 @@ public class Server implements Closeable {
         return new TransactionsRequestBuilder(httpClient, serverURI);
     }
 
+    /**
+     * Returns {@link LiquidityPoolsRequestBuilder} instance.
+     */
+    public LiquidityPoolsRequestBuilder liquidityPools() {
+        return new LiquidityPoolsRequestBuilder(httpClient, serverURI);
+    }
+
     private Optional<Network> getNetwork() {
         Lock readLock = this.networkLock.readLock();
         readLock.lock();
@@ -334,7 +341,8 @@ public class Server implements Closeable {
     /**
      * Submits a transaction to the network
      *
-     * This function will always check if the destination account requires a memo in the transaction.
+     * This function will always check if the destination account requires a memo in the transaction as
+     * defined in <a href="https://github.com/xdbfoundation/digitalbits-protocol/blob/master/ecosystem/sep-0029.md" target="_blank">SEP-0029</a>
      * If you want to skip this check, use {@link Server#submitTransaction(Transaction, boolean)}.
      *
      * @param transaction transaction to submit to the network.
@@ -352,7 +360,8 @@ public class Server implements Closeable {
     /**
      * Submits a fee bump transaction to the network
      *
-     * This function will always check if the destination account requires a memo in the transaction.
+     * This function will always check if the destination account requires a memo in the transaction as
+     * defined in <a href="https://github.com/xdbfoundation/digitalbits-protocol/blob/master/ecosystem/sep-0029.md" target="_blank">SEP-0029</a>
      * If you want to skip this check, use {@link Server#submitTransaction(Transaction, boolean)}.
      *
      * @param transaction transaction to submit to the network.
@@ -372,7 +381,8 @@ public class Server implements Closeable {
     }
 
     /**
-     * checkMemoRequired implements a memo required check
+     * checkMemoRequired implements a memo required check as defined in
+     * <a href="https://github.com/xdbfoundation/digitalbits-protocol/blob/master/ecosystem/sep-0029.md" target="_blank">SEP-0029</a>
      *
      * @param transaction transaction to submit to the network.
      * @throws AccountRequiresMemoException when a transaction is trying to submit an operation to an

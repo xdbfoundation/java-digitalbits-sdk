@@ -8,8 +8,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 
 import io.digitalbits.sdk.Asset;
+import io.digitalbits.sdk.LiquidityPoolID;
 import io.digitalbits.sdk.Predicate;
 import io.digitalbits.sdk.responses.effects.*;
+import io.digitalbits.sdk.xdr.LiquidityPoolType;
 
 import java.lang.reflect.Type;
 
@@ -19,6 +21,8 @@ class EffectDeserializer implements JsonDeserializer<EffectResponse> {
     // Create new Gson object with adapters needed in Operation
     Gson gson = new GsonBuilder()
         .registerTypeAdapter(Asset.class, new AssetDeserializer())
+        .registerTypeAdapter(LiquidityPoolID.class, new LiquidityPoolIDDeserializer())
+        .registerTypeAdapter(LiquidityPoolType.class, new LiquidityPoolTypeDeserializer())
         .registerTypeAdapter(Predicate.class, new PredicateDeserializer())
         .create();
 
@@ -123,6 +127,18 @@ class EffectDeserializer implements JsonDeserializer<EffectResponse> {
         return gson.fromJson(json, SignerSponsorshipRemovedEffectResponse.class);
       case 80:
         return gson.fromJson(json, ClaimableBalanceClawedBackEffectResponse.class);
+      case 90:
+        return gson.fromJson(json, LiquidityPoolDepositedEffectResponse.class);
+      case 91:
+        return gson.fromJson(json, LiquidityPoolWithdrewEffectResponse.class);
+      case 92:
+        return gson.fromJson(json, LiquidityPoolTradeEffectResponse.class);
+      case 93:
+        return gson.fromJson(json, LiquidityPoolCreatedEffectResponse.class);
+      case 94:
+        return gson.fromJson(json, LiquidityPoolRemovedEffectResponse.class);
+      case 95:
+        return gson.fromJson(json, LiquidityPoolRevokedEffectResponse.class);
       default:
         throw new RuntimeException("Invalid effect type");
     }

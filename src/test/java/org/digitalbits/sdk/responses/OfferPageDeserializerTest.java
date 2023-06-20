@@ -7,6 +7,8 @@ import junit.framework.TestCase;
 import org.junit.Test;
 import io.digitalbits.sdk.Asset;
 
+import static io.digitalbits.sdk.Asset.create;
+
 public class OfferPageDeserializerTest extends TestCase {
   @Test
   public void testDeserialize() {
@@ -15,8 +17,8 @@ public class OfferPageDeserializerTest extends TestCase {
     assertEquals(offerPage.getRecords().get(0).getId(), new Long(241));
     assertEquals(offerPage.getRecords().get(0).getSeller(), "GA2IYMIZSAMDD6QQTTSIEL73H2BKDJQTA7ENDEEAHJ3LMVF7OYIZPXQD");
     assertEquals(offerPage.getRecords().get(0).getPagingToken(), "241");
-    assertEquals(offerPage.getRecords().get(0).getSelling(), Asset.createNonNativeAsset("INR", "GA2IYMIZSAMDD6QQTTSIEL73H2BKDJQTA7ENDEEAHJ3LMVF7OYIZPXQD"));
-    assertEquals(offerPage.getRecords().get(0).getBuying(), Asset.createNonNativeAsset("USD", "GA2IYMIZSAMDD6QQTTSIEL73H2BKDJQTA7ENDEEAHJ3LMVF7OYIZPXQD"));
+    assertEquals(offerPage.getRecords().get(0).getSelling(), create(null,"INR", "GA2IYMIZSAMDD6QQTTSIEL73H2BKDJQTA7ENDEEAHJ3LMVF7OYIZPXQD"));
+    assertEquals(offerPage.getRecords().get(0).getBuying(), create(null,"USD", "GA2IYMIZSAMDD6QQTTSIEL73H2BKDJQTA7ENDEEAHJ3LMVF7OYIZPXQD"));
     assertEquals(offerPage.getRecords().get(0).getAmount(), "10.0000000");
     assertEquals(offerPage.getRecords().get(0).getPrice(), "11.0000000");
     assertEquals(offerPage.getRecords().get(0).getLastModifiedLedger(), new Integer(22200794));
@@ -35,8 +37,8 @@ public class OfferPageDeserializerTest extends TestCase {
     assertEquals(offerPage.getRecords().get(0).getId(), new Long(241));
     assertEquals(offerPage.getRecords().get(0).getSeller(), "GA2IYMIZSAMDD6QQTTSIEL73H2BKDJQTA7ENDEEAHJ3LMVF7OYIZPXQD");
     assertEquals(offerPage.getRecords().get(0).getPagingToken(), "241");
-    assertEquals(offerPage.getRecords().get(0).getSelling(), Asset.createNonNativeAsset("INR", "GA2IYMIZSAMDD6QQTTSIEL73H2BKDJQTA7ENDEEAHJ3LMVF7OYIZPXQD"));
-    assertEquals(offerPage.getRecords().get(0).getBuying(), Asset.createNonNativeAsset("USD", "GA2IYMIZSAMDD6QQTTSIEL73H2BKDJQTA7ENDEEAHJ3LMVF7OYIZPXQD"));
+    assertEquals(offerPage.getRecords().get(0).getSelling(), create(null,"INR", "GA2IYMIZSAMDD6QQTTSIEL73H2BKDJQTA7ENDEEAHJ3LMVF7OYIZPXQD"));
+    assertEquals(offerPage.getRecords().get(0).getBuying(), create(null,"USD", "GA2IYMIZSAMDD6QQTTSIEL73H2BKDJQTA7ENDEEAHJ3LMVF7OYIZPXQD"));
     assertEquals(offerPage.getRecords().get(0).getAmount(), "10.0000000");
     assertEquals(offerPage.getRecords().get(0).getPrice(), "11.0000000");
     assertEquals(offerPage.getRecords().get(0).getLastModifiedLedger(), new Integer(22200794));

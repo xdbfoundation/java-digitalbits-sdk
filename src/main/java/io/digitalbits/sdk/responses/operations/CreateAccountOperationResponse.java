@@ -4,6 +4,8 @@ import com.google.common.base.Optional;
 import com.google.gson.annotations.SerializedName;
 import io.digitalbits.sdk.responses.MuxedAccount;
 
+import java.math.BigInteger;
+
 /**
  * Represents CreateAccount operation response.
  * @see <a href="https://developers.digitalbits.io/frontier/reference/resources/operation.html" target="_blank">Operation documentation</a>
@@ -18,7 +20,7 @@ public class CreateAccountOperationResponse extends OperationResponse {
   @SerializedName("funder_muxed")
   private String funderAccountMuxed;
   @SerializedName("funder_muxed_id")
-  private Long funderAccountMuxedId;
+  private BigInteger funderAccountMuxedId;
   @SerializedName("starting_balance")
   private String startingBalance;
 

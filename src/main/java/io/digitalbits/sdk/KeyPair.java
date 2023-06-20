@@ -9,8 +9,14 @@ import net.i2p.crypto.eddsa.spec.EdDSANamedCurveSpec;
 import net.i2p.crypto.eddsa.spec.EdDSANamedCurveTable;
 import net.i2p.crypto.eddsa.spec.EdDSAPrivateKeySpec;
 import net.i2p.crypto.eddsa.spec.EdDSAPublicKeySpec;
-
-import io.digitalbits.sdk.xdr.*;
+import io.digitalbits.sdk.xdr.DecoratedSignature;
+import io.digitalbits.sdk.xdr.PublicKey;
+import io.digitalbits.sdk.xdr.PublicKeyType;
+import io.digitalbits.sdk.xdr.SignatureHint;
+import io.digitalbits.sdk.xdr.SignerKey;
+import io.digitalbits.sdk.xdr.SignerKeyType;
+import io.digitalbits.sdk.xdr.Uint256;
+import io.digitalbits.sdk.xdr.XdrDataOutputStream;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -21,6 +27,7 @@ import java.security.SignatureException;
 import java.util.Arrays;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.lang.System.arraycopy;
 
 /**
  * Holds a DigitalBits keypair.
@@ -66,7 +73,6 @@ public class KeyPair {
   public static KeyPair fromSecretSeed(char[] seed) {
     byte[] decoded = StrKey.decodeDigitalBitsSecretSeed(seed);
     KeyPair keypair = fromSecretSeed(decoded);
-    Arrays.fill(decoded, (byte) 0);
     return keypair;
   }
 
@@ -122,7 +128,8 @@ public class KeyPair {
   }
 
   /**
-   * Finds the KeyPair for the path m/44'/148'/accountNumber'.
+   * Finds the KeyPair for the path m/44'/148'/accountNumber' using the method described in
+   * <a href="https://github.com/xdbfoundation/digitalbits-protocol/blob/master/ecosystem/sep-0005.md">SEP-0005</a>.
    *
    * @param bip39Seed     The output of BIP0039
    * @param accountNumber The number of the account
@@ -226,7 +233,9 @@ public class KeyPair {
 
   /**
    * Sign the provided data with the keypair's private key and returns {@link DecoratedSignature}.
-   * @param data
+   *
+   * @param data the data to sign
+   * @return          DecoratedSignature
    */
   public DecoratedSignature signDecorated(byte[] data) {
     byte[] signatureBytes = this.sign(data);
@@ -238,6 +247,34 @@ public class KeyPair {
     decoratedSignature.setHint(this.getSignatureHint());
     decoratedSignature.setSignature(signature);
     return decoratedSignature;
+  }
+
+  /**
+   * Sign the provided payload data for payload signer where the input is the data being signed.
+   * Per the <a href="https://github.com/xdbfoundation/digitalbits-protocol/blob/master/core/cap-0040.md#signature-hint" CAP-40 Signature spec</a>
+   * {@link DecoratedSignature}.
+   *
+   * @param signerPayload the payload signers raw data to sign
+   * @return          DecoratedSignature
+   */
+  public DecoratedSignature signPayloadDecorated(byte[] signerPayload) {
+    DecoratedSignature payloadSignature = signDecorated(signerPayload);
+
+    byte[] hint = new byte[4];
+
+    // copy the last four bytes of the payload into the new hint
+    if (signerPayload.length >= hint.length) {
+      arraycopy(signerPayload, signerPayload.length - hint.length, hint, 0, hint.length);
+    } else {
+      arraycopy(signerPayload, 0, hint, 0, signerPayload.length);
+    }
+
+    //XOR the new hint with this keypair's public key hint
+    for (int i = 0; i < hint.length; i++) {
+      hint[i] ^= payloadSignature.getHint().getSignatureHint()[i];
+    }
+    payloadSignature.getHint().setSignatureHint(hint);
+    return payloadSignature;
   }
 
   /**
@@ -271,7 +308,7 @@ public class KeyPair {
     }
 
     KeyPair other = (KeyPair) object;
-    return this.mPrivateKey.equals(other.mPrivateKey) &&
+    return Objects.equal(this.mPrivateKey, other.mPrivateKey) &&
             this.mPublicKey.equals(other.mPublicKey);
 
   }

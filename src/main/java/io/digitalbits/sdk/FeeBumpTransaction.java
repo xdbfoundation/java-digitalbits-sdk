@@ -2,14 +2,19 @@ package io.digitalbits.sdk;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
-import io.digitalbits.sdk.xdr.*;
+import io.digitalbits.sdk.xdr.DecoratedSignature;
+import io.digitalbits.sdk.xdr.EnvelopeType;
+import io.digitalbits.sdk.xdr.FeeBumpTransactionEnvelope;
+import io.digitalbits.sdk.xdr.Int64;
+import io.digitalbits.sdk.xdr.TransactionEnvelope;
+import io.digitalbits.sdk.xdr.TransactionSignaturePayload;
 
 import java.util.Arrays;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Represents Fee Bump Transaction in DigitalBits network.
+ * Represents <a href="https://github.com/xdbfoundation/digitalbits-protocol/blob/master/core/cap-0015.md" target="_blank">Fee Bump Transaction</a> in DigitalBits network.
  */
 public class FeeBumpTransaction extends AbstractTransaction {
   private final long mFee;
@@ -49,7 +54,7 @@ public class FeeBumpTransaction extends AbstractTransaction {
   }
 
   public static FeeBumpTransaction fromFeeBumpTransactionEnvelope(FeeBumpTransactionEnvelope envelope, Network network) {
-    return fromFeeBumpTransactionEnvelope(AccountConverter.disableMuxed(), envelope, network);
+    return fromFeeBumpTransactionEnvelope(AccountConverter.enableMuxed(), envelope, network);
   }
 
     private io.digitalbits.sdk.xdr.FeeBumpTransaction toXdr() {
@@ -111,23 +116,20 @@ public class FeeBumpTransaction extends AbstractTransaction {
      * Construct a new fee bump transaction builder.
      *
      * @param accountConverter The AccountConverter which will be used to encode the fee account.
-     * @param inner The inner transaction which will be fee bumped.
+     * @param inner The inner transaction which will be fee bumped. read-only, the
      */
-    public Builder(AccountConverter accountConverter, Transaction inner) {
-      inner = checkNotNull(inner, "inner cannot be null");
+    public Builder(AccountConverter accountConverter, final Transaction inner) {
+      checkNotNull(inner, "inner cannot be null");
       EnvelopeType txType = inner.toEnvelopeXdr().getDiscriminant();
       this.mAccountConverter = checkNotNull(accountConverter, "accountConverter cannot be null");
       if (inner.toEnvelopeXdr().getDiscriminant() == EnvelopeType.ENVELOPE_TYPE_TX_V0) {
-        this.mInner = new Transaction(
-            inner.accountConverter,
-            inner.getSourceAccount(),
-            inner.getFee(),
-            inner.getSequenceNumber(),
-            inner.getOperations(),
-            inner.getMemo(),
-            inner.getTimeBounds(),
-            inner.getNetwork()
-        );
+        this.mInner = new TransactionBuilder(inner.accountConverter, new Account(inner.getSourceAccount(), inner.getSequenceNumber() - 1), inner.getNetwork())
+                .setBaseFee((int)inner.getFee())
+                .addOperations(Arrays.asList(inner.getOperations()))
+                .addMemo(inner.getMemo())
+                .addPreconditions(new TransactionPreconditions.TransactionPreconditionsBuilder().timeBounds(inner.getTimeBounds()).build())
+                .build();
+
         this.mInner.mSignatures = Lists.newArrayList(inner.mSignatures);
       } else {
         this.mInner = inner;
@@ -140,7 +142,7 @@ public class FeeBumpTransaction extends AbstractTransaction {
      * @param inner The inner transaction which will be fee bumped.
      */
     public Builder(Transaction inner) {
-      this(AccountConverter.disableMuxed(), inner);
+      this(AccountConverter.enableMuxed(), inner);
     }
 
     public FeeBumpTransaction.Builder setBaseFee(long baseFee) {

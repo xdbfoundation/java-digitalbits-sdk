@@ -2,9 +2,11 @@ package io.digitalbits.sdk.requests;
 
 import okhttp3.HttpUrl;
 import org.junit.Test;
-import io.digitalbits.sdk.*;
+import io.digitalbits.sdk.AssetTypeNative;
+import io.digitalbits.sdk.Server;
 
 import static org.junit.Assert.assertEquals;
+import static io.digitalbits.sdk.Asset.create;
 
 public class TradeAggregationsRequestBuilderTest {
     @Test
@@ -12,7 +14,7 @@ public class TradeAggregationsRequestBuilderTest {
         Server server = new Server("https://frontier.testnet.digitalbits.io");
         HttpUrl uri = server.tradeAggregations(
                 new AssetTypeNative(),
-                Asset.createNonNativeAsset("BTC", "GATEMHCCKCY67ZUCKTROYN24ZYT5GK4EQZ65JJLDHKHRUZI3EUEKMTCH"),
+                create(null,"BTC", "GATEMHCCKCY67ZUCKTROYN24ZYT5GK4EQZ65JJLDHKHRUZI3EUEKMTCH"),
                 1512689100000L,
                 1512775500000L,
                 300000L,

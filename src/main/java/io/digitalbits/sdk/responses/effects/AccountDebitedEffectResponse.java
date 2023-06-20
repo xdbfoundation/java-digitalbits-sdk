@@ -1,9 +1,9 @@
 package io.digitalbits.sdk.responses.effects;
 
 import com.google.gson.annotations.SerializedName;
-
 import io.digitalbits.sdk.Asset;
-import io.digitalbits.sdk.AssetTypeNative;
+
+import static io.digitalbits.sdk.Asset.create;
 
 /**
  * Represents account_debited effect response.
@@ -33,10 +33,6 @@ public class AccountDebitedEffectResponse extends EffectResponse {
   }
 
   public Asset getAsset() {
-    if (assetType.equals("native")) {
-      return new AssetTypeNative();
-    } else {
-      return Asset.createNonNativeAsset(assetCode, assetIssuer);
-    }
+    return create(assetType, assetCode, assetIssuer);
   }
 }

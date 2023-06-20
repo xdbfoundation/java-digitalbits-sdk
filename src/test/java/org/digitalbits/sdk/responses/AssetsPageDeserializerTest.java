@@ -26,7 +26,7 @@ public class AssetsPageDeserializerTest extends TestCase {
         assertEquals(page.getRecords().get(0).getClaimableBalancesAmount(), "0.0000000");
         assertEquals(page.getRecords().get(0).getAmount(), "0.0000000");
         assertEquals(page.getRecords().get(0).getNumAccounts(), 1);
-        assertEquals(page.getRecords().get(0).getLinks().getToml().getHref(), "https://livenet.digitalbits.io/.well-known/digitalbits.toml");
+        assertEquals(page.getRecords().get(0).getLinks().getToml().getHref(), "https://www.digitalbits.io/.well-known/digitalbits.toml");
         assertEquals(page.getRecords().get(0).getFlags().isAuthRequired(), true);
         assertEquals(page.getRecords().get(0).getFlags().isAuthRevocable(), false);
     }
@@ -48,7 +48,7 @@ public class AssetsPageDeserializerTest extends TestCase {
             "      {\n" +
             "        \"_links\": {\n" +
             "          \"toml\": {\n" +
-            "            \"href\": \"https://livenet.digitalbits.io/.well-known/digitalbits.toml\"\n" +
+            "            \"href\": \"https://www.digitalbits.io/.well-known/digitalbits.toml\"\n" +
             "          }\n" +
             "        },\n" +
             "        \"asset_type\": \"credit_alphanum12\",\n" +
@@ -251,7 +251,7 @@ public class AssetsPageDeserializerTest extends TestCase {
             "      {\n" +
             "        \"_links\": {\n" +
             "          \"toml\": {\n" +
-            "            \"href\": \"https://livenet.digitalbits.io/.well-known/digitalbits.toml\"\n" +
+            "            \"href\": \"https://mydigitalbits.tools/.well-known/digitalbits.toml\"\n" +
             "          }\n" +
             "        },\n" +
             "        \"asset_type\": \"credit_alphanum4\",\n" +

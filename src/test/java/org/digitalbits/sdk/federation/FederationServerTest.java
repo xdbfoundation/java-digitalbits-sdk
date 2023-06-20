@@ -22,7 +22,7 @@ public class FederationServerTest extends TestCase {
           "{\"code\":\"not_found\",\"message\":\"Account not found\"}";
 
   private final String digitalbitsToml =
-          "FEDERATION_SERVER = \"https://api.livenet.digitalbits.io/federation\"";
+          "FEDERATION_SERVER = \"https://api.digitalbits.io/federation\"";
 
   @Before
   public void setUp() throws IOException {
@@ -43,7 +43,7 @@ public class FederationServerTest extends TestCase {
     HttpUrl baseUrl = mockWebServer.url("");
     String domain = String.format("%s:%d", baseUrl.host(), baseUrl.port());
     FederationServer server = FederationServer.createForDomain(domain);
-    assertEquals(server.getServerUri().toString(), "https://api.livenet.digitalbits.io/federation");
+    assertEquals(server.getServerUri().toString(), "https://api.digitalbits.io/federation");
     assertEquals(server.getDomain(), domain);
 
     RecordedRequest digitalbitsTomlRequest = mockWebServer.takeRequest();
@@ -59,7 +59,7 @@ public class FederationServerTest extends TestCase {
 
     FederationServer server = new FederationServer(
             baseUrl.toString(),
-            "livenet.digitalbits.io"
+            "digitalbits.io"
     );
 
     FederationResponse response = server.resolveAddress("bob*digitalbits.io");
@@ -78,7 +78,7 @@ public class FederationServerTest extends TestCase {
 
     FederationServer server = new FederationServer(
             baseUrl.toString(),
-            "livenet.digitalbits.io"
+            "digitalbits.io"
     );
 
     FederationResponse response = server.resolveAddress("bob*digitalbits.io");
@@ -97,7 +97,7 @@ public class FederationServerTest extends TestCase {
 
     FederationServer server = new FederationServer(
             baseUrl.toString(),
-            "livenet.digitalbits.io"
+            "digitalbits.io"
     );
 
     try {

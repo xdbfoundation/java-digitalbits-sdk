@@ -3,6 +3,8 @@ package io.digitalbits.sdk;
 /**
  * AccountRequiresMemoException is thrown when a transaction is trying to submit an operation to an
  * account which requires a memo.
+ *
+ * See <a href="https://github.com/xdbfoundation/digitalbits-protocol/blob/master/ecosystem/sep-0029.md" target="_blank">SEP-0029</a> for more information.
  */
 public class AccountRequiresMemoException extends Exception {
     private final String accountId;

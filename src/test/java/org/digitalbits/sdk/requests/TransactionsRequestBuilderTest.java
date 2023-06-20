@@ -3,6 +3,7 @@ package io.digitalbits.sdk.requests;
 import okhttp3.HttpUrl;
 import org.junit.Test;
 import io.digitalbits.sdk.KeyPair;
+import io.digitalbits.sdk.LiquidityPoolID;
 import io.digitalbits.sdk.Network;
 import io.digitalbits.sdk.Server;
 
@@ -50,6 +51,15 @@ public class TransactionsRequestBuilderTest {
             .order(RequestBuilder.Order.ASC)
             .buildUri();
     assertEquals("https://frontier.testnet.digitalbits.io/ledgers/200000000000/transactions?limit=50&order=asc", uri.toString());
+  }
+
+  @Test
+  public void testForLiquidityPool() {
+    Server server = new Server("https://frontier.testnet.digitalbits.io");
+    HttpUrl uri = server.transactions()
+            .forLiquidityPool(new LiquidityPoolID("67260c4c1807b262ff851b0a3fe141194936bb0215b2f77447f1df11998eabb9"))
+            .buildUri();
+    assertEquals("https://frontier.testnet.digitalbits.io/liquidity_pools/67260c4c1807b262ff851b0a3fe141194936bb0215b2f77447f1df11998eabb9/transactions", uri.toString());
   }
 
   @Test

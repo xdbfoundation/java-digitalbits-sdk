@@ -90,7 +90,7 @@ public class PaymentOperation extends Operation {
      * Creates a new PaymentOperation builder.
      * @param destination The destination account id
      * @param asset The asset to send.
-     * @param amount The amount to send in lumens.
+     * @param amount The amount to send in nibbs.
      * @throws ArithmeticException when amount has more than 7 decimal places.
      */
     public Builder(String destination, Asset asset, String amount) {

@@ -29,12 +29,29 @@ public final class AssetTypeCreditAlphaNum4 extends AssetTypeCreditAlphaNum {
   public io.digitalbits.sdk.xdr.Asset toXdr() {
     io.digitalbits.sdk.xdr.Asset xdr = new io.digitalbits.sdk.xdr.Asset();
     xdr.setDiscriminant(AssetType.ASSET_TYPE_CREDIT_ALPHANUM4);
-    io.digitalbits.sdk.xdr.Asset.AssetAlphaNum4 credit = new io.digitalbits.sdk.xdr.Asset.AssetAlphaNum4();
+    io.digitalbits.sdk.xdr.AlphaNum4 credit = new io.digitalbits.sdk.xdr.AlphaNum4();
     AssetCode4 assetCode4 = new AssetCode4();
     assetCode4.setAssetCode4(Util.paddedByteArray(mCode, 4));
     credit.setAssetCode(assetCode4);
     credit.setIssuer(StrKey.encodeToXDRAccountId(mIssuer));
     xdr.setAlphaNum4(credit);
     return xdr;
+  }
+
+  @Override
+  public int compareTo(Asset other) {
+    if (other.getType() == "credit_alphanum12") {
+      return -1;
+    } else if (other.getType() == "native") {
+      return 1;
+    }
+
+    AssetTypeCreditAlphaNum o = (AssetTypeCreditAlphaNum) other;
+
+    if (!this.getCode().equals(o.getCode())) {
+      return this.getCode().compareTo(o.getCode());
+    }
+
+    return this.getIssuer().compareTo(o.getIssuer());
   }
 }

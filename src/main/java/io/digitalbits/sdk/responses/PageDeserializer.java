@@ -10,6 +10,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 
 import io.digitalbits.sdk.Asset;
+import io.digitalbits.sdk.LiquidityPoolID;
 import io.digitalbits.sdk.Predicate;
 import io.digitalbits.sdk.responses.effects.EffectResponse;
 import io.digitalbits.sdk.responses.operations.OperationResponse;
@@ -43,7 +44,9 @@ class PageDeserializer<E> implements JsonDeserializer<Page<E>> {
             .registerTypeAdapter(Predicate.class, new PredicateDeserializer())
             .registerTypeAdapter(OperationResponse.class, new OperationDeserializer())
             .registerTypeAdapter(EffectResponse.class, new EffectDeserializer())
+            .registerTypeAdapter(LiquidityPoolResponse.class, new LiquidityPoolDeserializer())
             .registerTypeAdapter(TransactionResponse.class, new TransactionDeserializer())
+            .registerTypeAdapter(LiquidityPoolID.class, new LiquidityPoolIDDeserializer())
             .create();
 
     return gson.fromJson(newJson, pageType.getType());

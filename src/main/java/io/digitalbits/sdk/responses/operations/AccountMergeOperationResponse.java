@@ -4,6 +4,8 @@ import com.google.common.base.Optional;
 import com.google.gson.annotations.SerializedName;
 import io.digitalbits.sdk.responses.MuxedAccount;
 
+import java.math.BigInteger;
+
 /**
  * Represents AccountMerge operation response.
  * @see <a href="https://developers.digitalbits.io/frontier/reference/resources/operation.html" target="_blank">Operation documentation</a>
@@ -16,14 +18,14 @@ public class AccountMergeOperationResponse extends OperationResponse {
   @SerializedName("account_muxed")
   private String accountMuxed;
   @SerializedName("account_muxed_id")
-  private Long accountMuxedId;
+  private BigInteger accountMuxedId;
 
   @SerializedName("into")
   private String into;
   @SerializedName("into_muxed")
   private String intoMuxed;
   @SerializedName("into_muxed_id")
-  private Long intoMuxedId;
+  private BigInteger intoMuxedId;
 
   public Optional<MuxedAccount> getAccountMuxed() {
     if (this.accountMuxed == null || this.accountMuxed.isEmpty()) {

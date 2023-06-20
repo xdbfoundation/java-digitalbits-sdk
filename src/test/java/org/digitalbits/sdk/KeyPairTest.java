@@ -2,6 +2,7 @@ package io.digitalbits.sdk;
 
 import org.junit.Assert;
 import org.junit.Test;
+import io.digitalbits.sdk.xdr.DecoratedSignature;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,6 +12,17 @@ import static org.junit.Assert.*;
 public class KeyPairTest {
 
   private static final String SEED = "1123740522f11bfef6b3671f51e159ccf589ccf8965262dd5f97d1721d383dd4";
+
+  @Test
+  public void testFromSecretSeedCharArray() {
+    KeyPair original = KeyPair.fromSecretSeed("SDMMJC2BSGESMFQ53MF3WECMCQGJVRY3TJ45J7PYZ53GZZ36NDDDWEDM");
+
+    char[] seed = original.getSecretSeed();
+    KeyPair newPair = KeyPair.fromSecretSeed(seed);
+
+    assertArrayEquals(original.getSecretSeed(), newPair.getSecretSeed());
+    assertEquals(original.getAccountId(), newPair.getAccountId());
+  }
 
   @Test
   public void testInvalidPublicKey() {
@@ -85,5 +97,48 @@ public class KeyPairTest {
     } catch (RuntimeException e) {
       assertEquals("KeyPair does not contain secret key. Use KeyPair.fromSecretSeed method to create a new KeyPair with a secret key.", e.getMessage());
     }
+  }
+
+  @Test
+  public void testSignPayloadSigner() {
+    KeyPair keypair = KeyPair.fromSecretSeed(Util.hexToBytes(SEED));
+    // the hint from this keypair is [254,66,4,55]
+
+    byte[] payload = new byte[]{1,2,3,4,5};
+    DecoratedSignature sig = keypair.signPayloadDecorated(payload);
+    Assert.assertArrayEquals(sig.getHint().getSignatureHint(), new byte[]{(byte)(0xFF & 252), 65, 0, 50});
+
+  }
+
+  @Test
+  public void testSignPayloadSignerLessThanHint() {
+    KeyPair keypair = KeyPair.fromSecretSeed(Util.hexToBytes(SEED));
+    // the hint from this keypair is [254,66,4,55]
+
+    byte[] payload = new byte[]{1,2,3};
+    DecoratedSignature sig = keypair.signPayloadDecorated(payload);
+    // the hint could only be derived off of 3 bytes from payload
+    Assert.assertArrayEquals(sig.getHint().getSignatureHint(), new byte[]{(byte)(255), 64, 7, 55});
+  }
+
+  @Test
+  public void testPublicEqual() {
+    KeyPair keypair = KeyPair.fromAccountId("GDEAOZWTVHQZGGJY6KG4NAGJQ6DXATXAJO3AMW7C4IXLKMPWWB4FDNFZ");
+    KeyPair keypairCopy = KeyPair.fromAccountId("GDEAOZWTVHQZGGJY6KG4NAGJQ6DXATXAJO3AMW7C4IXLKMPWWB4FDNFZ");
+    Assert.assertEquals(keypairCopy, keypair);
+  }
+
+  @Test
+  public void testPublicPrivateNotEquals() {
+    KeyPair keypair = KeyPair.random();
+    KeyPair keypairPublicCopy = KeyPair.fromAccountId(keypair.getAccountId());
+    Assert.assertNotEquals(keypairPublicCopy, keypair);
+  }
+
+  @Test
+  public void testPrivateEquals() {
+    KeyPair keyPair = KeyPair.random();
+    KeyPair keypairCopy = KeyPair.fromSecretSeed(keyPair.getSecretSeed());
+    Assert.assertEquals(keyPair, keypairCopy);
   }
 }

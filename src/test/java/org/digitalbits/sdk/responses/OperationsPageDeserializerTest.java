@@ -12,6 +12,8 @@ import io.digitalbits.sdk.responses.operations.OperationResponse;
 import io.digitalbits.sdk.responses.operations.PaymentOperationResponse;
 import io.digitalbits.sdk.responses.operations.RevokeSponsorshipOperationResponse;
 
+import static java.lang.Long.valueOf;
+
 public class OperationsPageDeserializerTest extends TestCase {
   @Test
   public void testDeserialize() {
@@ -50,7 +52,7 @@ public class OperationsPageDeserializerTest extends TestCase {
 
     TransactionResponse transaction = createAccountOperation.getTransaction().get();
     assertEquals(transaction.getHash(), "749e4f8933221b9942ef38a02856803f379789ec8d971f1f60535db70135673e");
-    assertEquals(transaction.getLedger(), Long.valueOf(193));
+    assertEquals(transaction.getLedger(), valueOf(193));
     assertEquals(transaction.getMemo(), Memo.none());
   }
 
@@ -67,7 +69,7 @@ public class OperationsPageDeserializerTest extends TestCase {
     assertFalse(revokeOp.getSignerKey().isPresent());
     assertFalse(revokeOp.getTrustlineAccountId().isPresent());
     assertFalse(revokeOp.getTrustlineAsset().isPresent());
-    assertEquals(revokeOp.getOfferId().get(), "8822470");
+    assertEquals(revokeOp.getOfferId().get(), valueOf(8822470));
     assertEquals(revokeOp.getSourceAccount(), "GB6QDNU47MYBR4NDTRP7M3FW27DAFOEADN5KDQI2DAVWW6YVKKG4QJS7");
   }
 
@@ -120,13 +122,13 @@ public class OperationsPageDeserializerTest extends TestCase {
   String json = "{\n" +
           "  \"_links\": {\n" +
           "    \"self\": {\n" +
-          "      \"href\": \"http://frontier.testnet.digitalbits.io/operations?order=desc\\u0026limit=10\\u0026cursor=\"\n" +
+          "      \"href\": \"http://frontier-testnet.digitalbits.io/operations?order=desc\\u0026limit=10\\u0026cursor=\"\n" +
           "    },\n" +
           "    \"next\": {\n" +
-          "      \"href\": \"http://frontier.testnet.digitalbits.io/operations?order=desc\\u0026limit=10\\u0026cursor=3695540185337857\"\n" +
+          "      \"href\": \"http://frontier-testnet.digitalbits.io/operations?order=desc\\u0026limit=10\\u0026cursor=3695540185337857\"\n" +
           "    },\n" +
           "    \"prev\": {\n" +
-          "      \"href\": \"http://frontier.testnet.digitalbits.io/operations?order=asc\\u0026limit=10\\u0026cursor=3717508943056897\"\n" +
+          "      \"href\": \"http://frontier-testnet.digitalbits.io/operations?order=asc\\u0026limit=10\\u0026cursor=3717508943056897\"\n" +
           "    }\n" +
           "  },\n" +
           "  \"_embedded\": {\n" +
@@ -134,19 +136,19 @@ public class OperationsPageDeserializerTest extends TestCase {
           "      {\n" +
           "        \"_links\": {\n" +
           "          \"self\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/operations/3717508943056897\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/3717508943056897\"\n" +
           "          },\n" +
           "          \"transaction\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/transactions/ce81d957352501a46d9b938462cbef76283dcba8108d2649e0d79279a8f36488\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/transactions/ce81d957352501a46d9b938462cbef76283dcba8108d2649e0d79279a8f36488\"\n" +
           "          },\n" +
           "          \"effects\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/operations/3717508943056897/effects\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/3717508943056897/effects\"\n" +
           "          },\n" +
           "          \"succeeds\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=desc\\u0026cursor=3717508943056897\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=desc\\u0026cursor=3717508943056897\"\n" +
           "          },\n" +
           "          \"precedes\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=asc\\u0026cursor=3717508943056897\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=asc\\u0026cursor=3717508943056897\"\n" +
           "          }\n" +
           "        },\n" +
           "        \"id\": \"3717508943056897\",\n" +
@@ -163,19 +165,19 @@ public class OperationsPageDeserializerTest extends TestCase {
           "      {\n" +
           "        \"_links\": {\n" +
           "          \"self\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/operations/3715417293983745\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/3715417293983745\"\n" +
           "          },\n" +
           "          \"transaction\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/transactions/57d3ff20b53a21bd2a5c24838401e01fc13abc0193437d050dbdb8b7784cd674\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/transactions/57d3ff20b53a21bd2a5c24838401e01fc13abc0193437d050dbdb8b7784cd674\"\n" +
           "          },\n" +
           "          \"effects\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/operations/3715417293983745/effects\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/3715417293983745/effects\"\n" +
           "          },\n" +
           "          \"succeeds\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=desc\\u0026cursor=3715417293983745\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=desc\\u0026cursor=3715417293983745\"\n" +
           "          },\n" +
           "          \"precedes\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=asc\\u0026cursor=3715417293983745\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=asc\\u0026cursor=3715417293983745\"\n" +
           "          }\n" +
           "        },\n" +
           "        \"id\": \"3715417293983745\",\n" +
@@ -190,19 +192,19 @@ public class OperationsPageDeserializerTest extends TestCase {
           "      {\n" +
           "        \"_links\": {\n" +
           "          \"self\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/operations/3711620542894081\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/3711620542894081\"\n" +
           "          },\n" +
           "          \"transaction\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/transactions/e37b9dd7f36397e7a06ef121fb5446431585d30f8f3cf1d63a6d283e8f7b5a8c\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/transactions/e37b9dd7f36397e7a06ef121fb5446431585d30f8f3cf1d63a6d283e8f7b5a8c\"\n" +
           "          },\n" +
           "          \"effects\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/operations/3711620542894081/effects\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/3711620542894081/effects\"\n" +
           "          },\n" +
           "          \"succeeds\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=desc\\u0026cursor=3711620542894081\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=desc\\u0026cursor=3711620542894081\"\n" +
           "          },\n" +
           "          \"precedes\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=asc\\u0026cursor=3711620542894081\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=asc\\u0026cursor=3711620542894081\"\n" +
           "          }\n" +
           "        },\n" +
           "        \"id\": \"3711620542894081\",\n" +
@@ -217,19 +219,19 @@ public class OperationsPageDeserializerTest extends TestCase {
           "      {\n" +
           "        \"_links\": {\n" +
           "          \"self\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/operations/3709305555521537\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/3709305555521537\"\n" +
           "          },\n" +
           "          \"transaction\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/transactions/af6ab37cfbeefc62a215ab7c4f64b007b666eed0c12dd92abbe0af08461d7b7f\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/transactions/af6ab37cfbeefc62a215ab7c4f64b007b666eed0c12dd92abbe0af08461d7b7f\"\n" +
           "          },\n" +
           "          \"effects\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/operations/3709305555521537/effects\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/3709305555521537/effects\"\n" +
           "          },\n" +
           "          \"succeeds\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=desc\\u0026cursor=3709305555521537\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=desc\\u0026cursor=3709305555521537\"\n" +
           "          },\n" +
           "          \"precedes\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=asc\\u0026cursor=3709305555521537\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=asc\\u0026cursor=3709305555521537\"\n" +
           "          }\n" +
           "        },\n" +
           "        \"id\": \"3709305555521537\",\n" +
@@ -244,19 +246,19 @@ public class OperationsPageDeserializerTest extends TestCase {
           "      {\n" +
           "        \"_links\": {\n" +
           "          \"self\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/operations/3704821609664513\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/3704821609664513\"\n" +
           "          },\n" +
           "          \"transaction\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/transactions/d4cb66d51cf773a4126ef8d535f03ba08cdc2389dc067e05c5d2ba1b335f19f2\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/transactions/d4cb66d51cf773a4126ef8d535f03ba08cdc2389dc067e05c5d2ba1b335f19f2\"\n" +
           "          },\n" +
           "          \"effects\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/operations/3704821609664513/effects\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/3704821609664513/effects\"\n" +
           "          },\n" +
           "          \"succeeds\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=desc\\u0026cursor=3704821609664513\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=desc\\u0026cursor=3704821609664513\"\n" +
           "          },\n" +
           "          \"precedes\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=asc\\u0026cursor=3704821609664513\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=asc\\u0026cursor=3704821609664513\"\n" +
           "          }\n" +
           "        },\n" +
           "        \"id\": \"3704821609664513\",\n" +
@@ -272,19 +274,19 @@ public class OperationsPageDeserializerTest extends TestCase {
           "      {\n" +
           "        \"_links\": {\n" +
           "          \"self\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/operations/3704778659991553\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/3704778659991553\"\n" +
           "          },\n" +
           "          \"transaction\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/transactions/741a66dee5bafdefa1803bd80108fb86b075bbca80165bc4137c8f8ad1959efa\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/transactions/741a66dee5bafdefa1803bd80108fb86b075bbca80165bc4137c8f8ad1959efa\"\n" +
           "          },\n" +
           "          \"effects\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/operations/3704778659991553/effects\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/3704778659991553/effects\"\n" +
           "          },\n" +
           "          \"succeeds\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=desc\\u0026cursor=3704778659991553\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=desc\\u0026cursor=3704778659991553\"\n" +
           "          },\n" +
           "          \"precedes\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=asc\\u0026cursor=3704778659991553\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=asc\\u0026cursor=3704778659991553\"\n" +
           "          }\n" +
           "        },\n" +
           "        \"id\": \"3704778659991553\",\n" +
@@ -300,19 +302,19 @@ public class OperationsPageDeserializerTest extends TestCase {
           "      {\n" +
           "        \"_links\": {\n" +
           "          \"self\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/operations/3704435062607873\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/3704435062607873\"\n" +
           "          },\n" +
           "          \"transaction\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/transactions/9bf15f7003c098c935d03bd178eda02b39cecb7a6eb53b4dd278aa9d4620c45b\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/transactions/9bf15f7003c098c935d03bd178eda02b39cecb7a6eb53b4dd278aa9d4620c45b\"\n" +
           "          },\n" +
           "          \"effects\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/operations/3704435062607873/effects\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/3704435062607873/effects\"\n" +
           "          },\n" +
           "          \"succeeds\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=desc\\u0026cursor=3704435062607873\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=desc\\u0026cursor=3704435062607873\"\n" +
           "          },\n" +
           "          \"precedes\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=asc\\u0026cursor=3704435062607873\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=asc\\u0026cursor=3704435062607873\"\n" +
           "          }\n" +
           "        },\n" +
           "        \"id\": \"3704435062607873\",\n" +
@@ -327,19 +329,19 @@ public class OperationsPageDeserializerTest extends TestCase {
           "      {\n" +
           "        \"_links\": {\n" +
           "          \"self\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/operations/3700453627924481\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/3700453627924481\"\n" +
           "          },\n" +
           "          \"transaction\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/transactions/aae8986da322e9405fd27f0e284817cb2e86618151ac54ef8734f629d8cf9446\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/transactions/aae8986da322e9405fd27f0e284817cb2e86618151ac54ef8734f629d8cf9446\"\n" +
           "          },\n" +
           "          \"effects\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/operations/3700453627924481/effects\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/3700453627924481/effects\"\n" +
           "          },\n" +
           "          \"succeeds\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=desc\\u0026cursor=3700453627924481\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=desc\\u0026cursor=3700453627924481\"\n" +
           "          },\n" +
           "          \"precedes\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=asc\\u0026cursor=3700453627924481\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=asc\\u0026cursor=3700453627924481\"\n" +
           "          }\n" +
           "        },\n" +
           "        \"id\": \"3700453627924481\",\n" +
@@ -354,19 +356,19 @@ public class OperationsPageDeserializerTest extends TestCase {
           "      {\n" +
           "        \"_links\": {\n" +
           "          \"self\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/operations/3696369114025985\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/3696369114025985\"\n" +
           "          },\n" +
           "          \"transaction\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/transactions/e852c069fbd0f3eafa691c276b0b57a4d0fad833e979fa192ad6b7a741892083\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/transactions/e852c069fbd0f3eafa691c276b0b57a4d0fad833e979fa192ad6b7a741892083\"\n" +
           "          },\n" +
           "          \"effects\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/operations/3696369114025985/effects\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/3696369114025985/effects\"\n" +
           "          },\n" +
           "          \"succeeds\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=desc\\u0026cursor=3696369114025985\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=desc\\u0026cursor=3696369114025985\"\n" +
           "          },\n" +
           "          \"precedes\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=asc\\u0026cursor=3696369114025985\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=asc\\u0026cursor=3696369114025985\"\n" +
           "          }\n" +
           "        },\n" +
           "        \"id\": \"3696369114025985\",\n" +
@@ -381,19 +383,19 @@ public class OperationsPageDeserializerTest extends TestCase {
           "      {\n" +
           "        \"_links\": {\n" +
           "          \"self\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/operations/3695540185337857\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/3695540185337857\"\n" +
           "          },\n" +
           "          \"transaction\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/transactions/0028e0d640a74b372c4195575c785da61605b6a7da95998cbb56553850e97963\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/transactions/0028e0d640a74b372c4195575c785da61605b6a7da95998cbb56553850e97963\"\n" +
           "          },\n" +
           "          \"effects\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/operations/3695540185337857/effects\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/3695540185337857/effects\"\n" +
           "          },\n" +
           "          \"succeeds\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=desc\\u0026cursor=3695540185337857\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=desc\\u0026cursor=3695540185337857\"\n" +
           "          },\n" +
           "          \"precedes\": {\n" +
-          "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=asc\\u0026cursor=3695540185337857\"\n" +
+          "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=asc\\u0026cursor=3695540185337857\"\n" +
           "          }\n" +
           "        },\n" +
           "        \"id\": \"3695540185337857\",\n" +
