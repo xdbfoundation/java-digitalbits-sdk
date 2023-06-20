@@ -1,9 +1,10 @@
 package io.digitalbits.sdk.responses.operations;
 
 import com.google.gson.annotations.SerializedName;
-
 import io.digitalbits.sdk.Asset;
 import io.digitalbits.sdk.AssetTypeNative;
+
+import static io.digitalbits.sdk.Asset.create;
 
 /**
  * Represents ManageSellOffer operation response.
@@ -63,7 +64,7 @@ public class ManageSellOfferOperationResponse extends OperationResponse {
     if (buyingAssetType.equals("native")) {
       return new AssetTypeNative();
     } else {
-      return Asset.createNonNativeAsset(buyingAssetCode, buyingAssetIssuer);
+      return create(buyingAssetType, buyingAssetCode, buyingAssetIssuer);
     }
   }
 
@@ -71,7 +72,7 @@ public class ManageSellOfferOperationResponse extends OperationResponse {
     if (sellingAssetType.equals("native")) {
       return new AssetTypeNative();
     } else {
-      return Asset.createNonNativeAsset(sellingAssetCode, sellingAssetIssuer);
+      return create(sellingAssetType, sellingAssetCode, sellingAssetIssuer);
     }
   }
 }

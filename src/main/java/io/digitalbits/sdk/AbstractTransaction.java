@@ -1,7 +1,14 @@
 package io.digitalbits.sdk;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.io.BaseEncoding;
-import io.digitalbits.sdk.xdr.*;
+import io.digitalbits.sdk.xdr.DecoratedSignature;
+import io.digitalbits.sdk.xdr.Hash;
+import io.digitalbits.sdk.xdr.SignatureHint;
+import io.digitalbits.sdk.xdr.TransactionEnvelope;
+import io.digitalbits.sdk.xdr.TransactionSignaturePayload;
+import io.digitalbits.sdk.xdr.XdrDataInputStream;
+import io.digitalbits.sdk.xdr.XdrDataOutputStream;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -75,13 +82,33 @@ public abstract class AbstractTransaction {
    */
   public abstract byte[] signatureBase();
 
+  /**
+   * Gets the Network string for this transaction.
+   *
+   * @return the Network string
+   */
   public Network getNetwork() {
     return mNetwork;
   }
 
+  /**
+   * Gets read only list(immutable) of the signatures on transaction.
+   *
+   * @return immutable list of signatures
+   */
   public List<DecoratedSignature> getSignatures() {
-    return mSignatures;
+    return ImmutableList.copyOf(mSignatures);
   }
+
+  /**
+   * Adds an additional signature to the transaction's existing list of signatures.
+   *
+   * @param signature the signature to add
+   */
+  public void addSignature(DecoratedSignature signature) {
+    mSignatures.add(signature);
+  }
+
 
   public abstract TransactionEnvelope toEnvelopeXdr();
 
@@ -126,7 +153,7 @@ public abstract class AbstractTransaction {
    * @return
    */
   public static AbstractTransaction fromEnvelopeXdr(TransactionEnvelope envelope, Network network) {
-    return fromEnvelopeXdr(AccountConverter.disableMuxed(), envelope, network);
+    return fromEnvelopeXdr(AccountConverter.enableMuxed(), envelope, network);
   }
 
   /**
@@ -150,7 +177,7 @@ public abstract class AbstractTransaction {
    * @throws IOException
    */
   public static AbstractTransaction fromEnvelopeXdr(String envelope, Network network) throws IOException {
-    return fromEnvelopeXdr(AccountConverter.disableMuxed(), envelope, network);
+    return fromEnvelopeXdr(AccountConverter.enableMuxed(), envelope, network);
   }
 
   public static byte[] getTransactionSignatureBase(TransactionSignaturePayload.TransactionSignaturePayloadTaggedTransaction taggedTransaction,

@@ -7,7 +7,10 @@ import io.digitalbits.sdk.Asset;
 import io.digitalbits.sdk.AssetTypeNative;
 import io.digitalbits.sdk.responses.MuxedAccount;
 
+import java.math.BigInteger;
 import java.util.List;
+
+import static io.digitalbits.sdk.Asset.create;
 
 public abstract class PathPaymentBaseOperationResponse extends OperationResponse {
   @SerializedName("amount")
@@ -19,13 +22,13 @@ public abstract class PathPaymentBaseOperationResponse extends OperationResponse
   @SerializedName("from_muxed")
   private String fromMuxed;
   @SerializedName("from_muxed_id")
-  private Long fromMuxedId;
+  private BigInteger fromMuxedId;
   @SerializedName("to")
   private String to;
   @SerializedName("to_muxed")
   private String toMuxed;
   @SerializedName("to_muxed_id")
-  private Long toMuxedId;
+  private BigInteger toMuxedId;
 
   @SerializedName("asset_type")
   private String assetType;
@@ -82,7 +85,7 @@ public abstract class PathPaymentBaseOperationResponse extends OperationResponse
     if (assetType.equals("native")) {
       return new AssetTypeNative();
     } else {
-      return Asset.createNonNativeAsset(assetCode, assetIssuer);
+      return create(assetType, assetCode, assetIssuer);
     }
   }
 
@@ -90,7 +93,7 @@ public abstract class PathPaymentBaseOperationResponse extends OperationResponse
     if (sourceAssetType.equals("native")) {
       return new AssetTypeNative();
     } else {
-      return Asset.createNonNativeAsset(sourceAssetCode, sourceAssetIssuer);
+      return create(sourceAssetType, sourceAssetCode, sourceAssetIssuer);
     }
   }
 }

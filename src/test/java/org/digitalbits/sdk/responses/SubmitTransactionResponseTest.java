@@ -13,11 +13,11 @@ public class SubmitTransactionResponseTest extends TestCase {
   @Test
   public void testDeserializeTransactionFailureResponse() throws IOException {
     String json = "{\n" +
-            "  \"type\": \"https://digitalbits.org/frontier-errors/transaction_failed\",\n" +
+            "  \"type\": \"https://developers.digitalbits.io/api/errors/http-status-codes/frontier-specific/transaction-failed/\",\n" +
             "  \"title\": \"Transaction Failed\",\n" +
             "  \"status\": 400,\n" +
-            "  \"detail\": \"The transaction failed when submitted to the DigitalBits network. The `extras.result_codes` field on this response contains further details.  Descriptions of each code can be found at: https://developers.digitalbits.io/guides/concepts/list-of-operations.html\",\n" +
-            "  \"instance\": \"frontier.testnet-001.internal/24ezFg\",\n" +
+            "  \"detail\": \"The transaction failed when submitted to the digitalbits network. The `extras.result_codes` field on this response contains further details.  Descriptions of each code can be found at: https://developers.digitalbits.io/docs/start/list-of-operations/\",\n" +
+            "  \"instance\": \"frontier-testnet-001.prd.digitalbits001.internal.digitalbits-ops.com/4elYz2fHhC-528285\",\n" +
             "  \"extras\": {\n" +
             "    \"envelope_xdr\": \"AAAAAKpmDL6Z4hvZmkTBkYpHftan4ogzTaO4XTB7joLgQnYYAAAAZAAAAAAABeoyAAAAAAAAAAEAAAAAAAAAAQAAAAAAAAABAAAAAD3sEVVGZGi/NoC3ta/8f/YZKMzyi9ZJpOi0H47x7IqYAAAAAAAAAAAF9eEAAAAAAAAAAAA=\",\n" +
             "    \"result_codes\": {\n" +
@@ -37,13 +37,41 @@ public class SubmitTransactionResponseTest extends TestCase {
   }
 
   @Test
-  public void testDeserializeOperationFailureResponse() throws IOException {
+  public void testDeserializeFeeBumpTransactionFailureResponse() throws IOException {
     String json = "{\n" +
-            "  \"type\": \"https://digitalbits.org/frontier-errors/transaction_failed\",\n" +
+            "  \"type\": \"https://developers.digitalbits.io/api/errors/http-status-codes/frontier-specific/transaction-failed/\",\n" +
             "  \"title\": \"Transaction Failed\",\n" +
             "  \"status\": 400,\n" +
-            "  \"detail\": \"The transaction failed when submitted to the DigitalBits network. The `extras.result_codes` field on this response contains further details.  Descriptions of each code can be found at: https://developers.digitalbits.io/guides/concepts/list-of-operations.html\",\n" +
-            "  \"instance\": \"frontier.testnet-001.internal/24ezFg\",\n" +
+            "  \"detail\": \"The transaction failed when submitted to the digitalbits network. The `extras.result_codes` field on this response contains further details.  Descriptions of each code can be found at: https://developers.digitalbits.io/docs/start/list-of-operations/\",\n" +
+            "  \"instance\": \"frontier-testnet-001.prd.digitalbits001.internal.digitalbits-ops.com/4elYz2fHhC-528285\",\n" +
+            "  \"extras\": {\n" +
+            "    \"envelope_xdr\": \"AAAAAKpmDL6Z4hvZmkTBkYpHftan4ogzTaO4XTB7joLgQnYYAAAAZAAAAAAABeoyAAAAAAAAAAEAAAAAAAAAAQAAAAAAAAABAAAAAD3sEVVGZGi/NoC3ta/8f/YZKMzyi9ZJpOi0H47x7IqYAAAAAAAAAAAF9eEAAAAAAAAAAAA=\",\n" +
+            "    \"result_codes\": {\n" +
+            "      \"transaction\": \"tx_fee_bump_inner_failed\",\n" +
+            "      \"inner_transaction\": \"tx_no_source_account\"\n" +
+            "    },\n" +
+            "    \"result_xdr\": \"AAAAAAAAAMj////zxZjN9tKJLJ6diZuWBitlMJ/4MXX1Akm9M5CqZt10ogoAAAAAAAAAAP////8AAAABAAAAAAAAAAb/////AAAAAAAAAAA=\"\n" +
+            "  }\n" +
+            "}";
+
+    SubmitTransactionResponse submitTransactionResponse = GsonSingleton.getInstance().fromJson(json, SubmitTransactionResponse.class);
+    assertEquals(submitTransactionResponse.isSuccess(), false);
+    assertEquals(submitTransactionResponse.getEnvelopeXdr().get(), "AAAAAKpmDL6Z4hvZmkTBkYpHftan4ogzTaO4XTB7joLgQnYYAAAAZAAAAAAABeoyAAAAAAAAAAEAAAAAAAAAAQAAAAAAAAABAAAAAD3sEVVGZGi/NoC3ta/8f/YZKMzyi9ZJpOi0H47x7IqYAAAAAAAAAAAF9eEAAAAAAAAAAAA=");
+    assertEquals(submitTransactionResponse.getResultXdr().get(), "AAAAAAAAAMj////zxZjN9tKJLJ6diZuWBitlMJ/4MXX1Akm9M5CqZt10ogoAAAAAAAAAAP////8AAAABAAAAAAAAAAb/////AAAAAAAAAAA=");
+    assertFalse(submitTransactionResponse.getOfferIdFromResult(0).isPresent());
+    assertFalse(submitTransactionResponse.getDecodedTransactionResult().isPresent());
+    assertEquals(submitTransactionResponse.getExtras().getResultCodes().getTransactionResultCode(), "tx_fee_bump_inner_failed");
+    assertEquals(submitTransactionResponse.getExtras().getResultCodes().getInnerTransactionResultCode(), "tx_no_source_account");
+  }
+
+  @Test
+  public void testDeserializeOperationFailureResponse() throws IOException {
+    String json = "{\n" +
+            "  \"type\": \"https://developers.digitalbits.io/api/errors/http-status-codes/frontier-specific/transaction-failed/\",\n" +
+            "  \"title\": \"Transaction Failed\",\n" +
+            "  \"status\": 400,\n" +
+            "  \"detail\": \"The transaction failed when submitted to the digitalbits network. The `extras.result_codes` field on this response contains further details.  Descriptions of each code can be found at: https://developers.digitalbits.io/docs/start/list-of-operations/\",\n" +
+            "  \"instance\": \"frontier-testnet-001.prd.digitalbits001.internal.digitalbits-ops.com/4elYz2fHhC-528366\",\n" +
             "  \"extras\": {\n" +
             "    \"envelope_xdr\": \"AAAAAF2O0axA67+p2jMunG6G188kDSHIvqQ13d9l29YCSA/uAAAAZAAvvc0AAAABAAAAAAAAAAEAAAAAAAAAAQAAAAAAAAABAAAAAD3sEVVGZGi/NoC3ta/8f/YZKMzyi9ZJpOi0H47x7IqYAAAAAAAAAAAF9eEAAAAAAAAAAAECSA/uAAAAQFuZVAjftHa+JZes1VxSk8naOfjjAz9V86mY1AZf8Ik6PtTsBpDsCfG57EYsq4jWyZcT+vhXyWsw5evF1ELqMw4=\",\n" +
             "    \"result_codes\": {\n" +

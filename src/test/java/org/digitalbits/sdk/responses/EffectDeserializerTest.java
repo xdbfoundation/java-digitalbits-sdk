@@ -1,12 +1,42 @@
 package io.digitalbits.sdk.responses;
 
 import junit.framework.TestCase;
-
 import org.junit.Test;
-import io.digitalbits.sdk.Asset;
+import io.digitalbits.sdk.AssetAmount;
 import io.digitalbits.sdk.AssetTypeNative;
-import io.digitalbits.sdk.KeyPair;
-import io.digitalbits.sdk.responses.effects.*;
+import io.digitalbits.sdk.Predicate;
+import io.digitalbits.sdk.responses.effects.AccountCreatedEffectResponse;
+import io.digitalbits.sdk.responses.effects.AccountCreditedEffectResponse;
+import io.digitalbits.sdk.responses.effects.AccountDebitedEffectResponse;
+import io.digitalbits.sdk.responses.effects.AccountFlagsUpdatedEffectResponse;
+import io.digitalbits.sdk.responses.effects.AccountHomeDomainUpdatedEffectResponse;
+import io.digitalbits.sdk.responses.effects.AccountInflationDestinationUpdatedEffectResponse;
+import io.digitalbits.sdk.responses.effects.AccountRemovedEffectResponse;
+import io.digitalbits.sdk.responses.effects.AccountThresholdsUpdatedEffectResponse;
+import io.digitalbits.sdk.responses.effects.ClaimableBalanceClaimantCreatedEffectResponse;
+import io.digitalbits.sdk.responses.effects.ClaimableBalanceClawedBackEffectResponse;
+import io.digitalbits.sdk.responses.effects.DataCreatedEffectResponse;
+import io.digitalbits.sdk.responses.effects.DataRemovedEffectResponse;
+import io.digitalbits.sdk.responses.effects.DataUpdatedEffectResponse;
+import io.digitalbits.sdk.responses.effects.EffectResponse;
+import io.digitalbits.sdk.responses.effects.LiquidityPoolTradeEffectResponse;
+import io.digitalbits.sdk.responses.effects.SequenceBumpedEffectResponse;
+import io.digitalbits.sdk.responses.effects.SignerCreatedEffectResponse;
+import io.digitalbits.sdk.responses.effects.SignerRemovedEffectResponse;
+import io.digitalbits.sdk.responses.effects.SignerUpdatedEffectResponse;
+import io.digitalbits.sdk.responses.effects.TradeEffectResponse;
+import io.digitalbits.sdk.responses.effects.TrustlineAuthorizedEffectResponse;
+import io.digitalbits.sdk.responses.effects.TrustlineAuthorizedToMaintainLiabilitiesEffectResponse;
+import io.digitalbits.sdk.responses.effects.TrustlineCreatedEffectResponse;
+import io.digitalbits.sdk.responses.effects.TrustlineDeauthorizedEffectResponse;
+import io.digitalbits.sdk.responses.effects.TrustlineFlagsUpdatedEffectResponse;
+import io.digitalbits.sdk.responses.effects.TrustlineRemovedEffectResponse;
+import io.digitalbits.sdk.responses.effects.TrustlineUpdatedEffectResponse;
+import io.digitalbits.sdk.xdr.LiquidityPoolType;
+
+import java.util.Arrays;
+
+import static io.digitalbits.sdk.Asset.create;
 
 public class EffectDeserializerTest extends TestCase {
   @Test
@@ -14,13 +44,13 @@ public class EffectDeserializerTest extends TestCase {
     String json = "{\n" +
             "        \"_links\": {\n" +
             "          \"operation\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/operations/65571265847297\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/65571265847297\"\n" +
             "          },\n" +
             "          \"succeeds\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=desc\\u0026cursor=65571265847297-1\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=desc\\u0026cursor=65571265847297-1\"\n" +
             "          },\n" +
             "          \"precedes\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=asc\\u0026cursor=65571265847297-1\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=asc\\u0026cursor=65571265847297-1\"\n" +
             "          }\n" +
             "        },\n" +
             "        \"id\": \"0000065571265847297-0000000001\",\n" +
@@ -37,9 +67,9 @@ public class EffectDeserializerTest extends TestCase {
     assertEquals(effect.getStartingBalance(), "30.0");
     assertEquals(effect.getPagingToken(), "65571265847297-1");
 
-    assertEquals(effect.getLinks().getOperation().getHref(), "http://frontier.testnet.digitalbits.io/operations/65571265847297");
-    assertEquals(effect.getLinks().getSucceeds().getHref(), "http://frontier.testnet.digitalbits.io/effects?order=desc&cursor=65571265847297-1");
-    assertEquals(effect.getLinks().getPrecedes().getHref(), "http://frontier.testnet.digitalbits.io/effects?order=asc&cursor=65571265847297-1");
+    assertEquals(effect.getLinks().getOperation().getHref(), "http://frontier-testnet.digitalbits.io/operations/65571265847297");
+    assertEquals(effect.getLinks().getSucceeds().getHref(), "http://frontier-testnet.digitalbits.io/effects?order=desc&cursor=65571265847297-1");
+    assertEquals(effect.getLinks().getPrecedes().getHref(), "http://frontier-testnet.digitalbits.io/effects?order=asc&cursor=65571265847297-1");
   }
 
   @Test
@@ -47,13 +77,13 @@ public class EffectDeserializerTest extends TestCase {
     String json = "{\n" +
             "        \"_links\": {\n" +
             "          \"operation\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/operations/65571265847297\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/65571265847297\"\n" +
             "          },\n" +
             "          \"succeeds\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=desc\\u0026cursor=65571265847297-1\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=desc\\u0026cursor=65571265847297-1\"\n" +
             "          },\n" +
             "          \"precedes\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=asc\\u0026cursor=65571265847297-1\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=asc\\u0026cursor=65571265847297-1\"\n" +
             "          }\n" +
             "        },\n" +
             "        \"id\": \"0000065571265847297-0000000001\",\n" +
@@ -67,9 +97,9 @@ public class EffectDeserializerTest extends TestCase {
 
     assertEquals(effect.getAccount(), "GCBQ6JRBPF3SXQBQ6SO5MRBE7WVV4UCHYOSHQGXSZNPZLFRYVYOWBZRQ");
 
-    assertEquals(effect.getLinks().getOperation().getHref(), "http://frontier.testnet.digitalbits.io/operations/65571265847297");
-    assertEquals(effect.getLinks().getSucceeds().getHref(), "http://frontier.testnet.digitalbits.io/effects?order=desc&cursor=65571265847297-1");
-    assertEquals(effect.getLinks().getPrecedes().getHref(), "http://frontier.testnet.digitalbits.io/effects?order=asc&cursor=65571265847297-1");
+    assertEquals(effect.getLinks().getOperation().getHref(), "http://frontier-testnet.digitalbits.io/operations/65571265847297");
+    assertEquals(effect.getLinks().getSucceeds().getHref(), "http://frontier-testnet.digitalbits.io/effects?order=desc&cursor=65571265847297-1");
+    assertEquals(effect.getLinks().getPrecedes().getHref(), "http://frontier-testnet.digitalbits.io/effects?order=asc&cursor=65571265847297-1");
   }
 
   @Test
@@ -77,13 +107,13 @@ public class EffectDeserializerTest extends TestCase {
     String json = "{\n" +
             "        \"_links\": {\n" +
             "          \"operation\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/operations/13563506724865\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/13563506724865\"\n" +
             "          },\n" +
             "          \"succeeds\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=desc\\u0026cursor=13563506724865-1\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=desc\\u0026cursor=13563506724865-1\"\n" +
             "          },\n" +
             "          \"precedes\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=asc\\u0026cursor=13563506724865-1\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=asc\\u0026cursor=13563506724865-1\"\n" +
             "          }\n" +
             "        },\n" +
             "        \"id\": \"0000013563506724865-0000000001\",\n" +
@@ -101,9 +131,9 @@ public class EffectDeserializerTest extends TestCase {
     TestCase.assertEquals(effect.getAsset(), new AssetTypeNative());
     assertEquals(effect.getAmount(), "1000.0");
 
-    assertEquals(effect.getLinks().getOperation().getHref(), "http://frontier.testnet.digitalbits.io/operations/13563506724865");
-    assertEquals(effect.getLinks().getSucceeds().getHref(), "http://frontier.testnet.digitalbits.io/effects?order=desc&cursor=13563506724865-1");
-    assertEquals(effect.getLinks().getPrecedes().getHref(), "http://frontier.testnet.digitalbits.io/effects?order=asc&cursor=13563506724865-1");
+    assertEquals(effect.getLinks().getOperation().getHref(), "http://frontier-testnet.digitalbits.io/operations/13563506724865");
+    assertEquals(effect.getLinks().getSucceeds().getHref(), "http://frontier-testnet.digitalbits.io/effects?order=desc&cursor=13563506724865-1");
+    assertEquals(effect.getLinks().getPrecedes().getHref(), "http://frontier-testnet.digitalbits.io/effects?order=asc&cursor=13563506724865-1");
   }
 
   @Test
@@ -111,13 +141,13 @@ public class EffectDeserializerTest extends TestCase {
     String json = "{\n" +
             "        \"_links\": {\n" +
             "          \"operation\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/operations/65571265843201\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/65571265843201\"\n" +
             "          },\n" +
             "          \"succeeds\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=desc\\u0026cursor=65571265843201-2\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=desc\\u0026cursor=65571265843201-2\"\n" +
             "          },\n" +
             "          \"precedes\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=asc\\u0026cursor=65571265843201-2\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=asc\\u0026cursor=65571265843201-2\"\n" +
             "          }\n" +
             "        },\n" +
             "        \"id\": \"0000065571265843201-0000000002\",\n" +
@@ -135,9 +165,9 @@ public class EffectDeserializerTest extends TestCase {
     assertEquals(effect.getAsset(), new AssetTypeNative());
     assertEquals(effect.getAmount(), "30.0");
 
-    assertEquals(effect.getLinks().getOperation().getHref(), "http://frontier.testnet.digitalbits.io/operations/65571265843201");
-    assertEquals(effect.getLinks().getSucceeds().getHref(), "http://frontier.testnet.digitalbits.io/effects?order=desc&cursor=65571265843201-2");
-    assertEquals(effect.getLinks().getPrecedes().getHref(), "http://frontier.testnet.digitalbits.io/effects?order=asc&cursor=65571265843201-2");
+    assertEquals(effect.getLinks().getOperation().getHref(), "http://frontier-testnet.digitalbits.io/operations/65571265843201");
+    assertEquals(effect.getLinks().getSucceeds().getHref(), "http://frontier-testnet.digitalbits.io/effects?order=desc&cursor=65571265843201-2");
+    assertEquals(effect.getLinks().getPrecedes().getHref(), "http://frontier-testnet.digitalbits.io/effects?order=asc&cursor=65571265843201-2");
   }
 
   @Test
@@ -145,13 +175,13 @@ public class EffectDeserializerTest extends TestCase {
     String json = "{\n" +
             "        \"_links\": {\n" +
             "          \"operation\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/operations/18970870550529\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/18970870550529\"\n" +
             "          },\n" +
             "          \"succeeds\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=desc\\u0026cursor=18970870550529-1\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=desc\\u0026cursor=18970870550529-1\"\n" +
             "          },\n" +
             "          \"precedes\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=asc\\u0026cursor=18970870550529-1\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=asc\\u0026cursor=18970870550529-1\"\n" +
             "          }\n" +
             "        },\n" +
             "        \"id\": \"0000018970870550529-0000000001\",\n" +
@@ -171,9 +201,9 @@ public class EffectDeserializerTest extends TestCase {
     assertEquals(effect.getMedThreshold(), new Integer(3));
     assertEquals(effect.getHighThreshold(), new Integer(4));
 
-    assertEquals(effect.getLinks().getOperation().getHref(), "http://frontier.testnet.digitalbits.io/operations/18970870550529");
-    assertEquals(effect.getLinks().getSucceeds().getHref(), "http://frontier.testnet.digitalbits.io/effects?order=desc&cursor=18970870550529-1");
-    assertEquals(effect.getLinks().getPrecedes().getHref(), "http://frontier.testnet.digitalbits.io/effects?order=asc&cursor=18970870550529-1");
+    assertEquals(effect.getLinks().getOperation().getHref(), "http://frontier-testnet.digitalbits.io/operations/18970870550529");
+    assertEquals(effect.getLinks().getSucceeds().getHref(), "http://frontier-testnet.digitalbits.io/effects?order=desc&cursor=18970870550529-1");
+    assertEquals(effect.getLinks().getPrecedes().getHref(), "http://frontier-testnet.digitalbits.io/effects?order=asc&cursor=18970870550529-1");
   }
 
   @Test
@@ -181,13 +211,13 @@ public class EffectDeserializerTest extends TestCase {
     String json = "{\n" +
             "        \"_links\": {\n" +
             "          \"operation\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/operations/18970870550529\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/18970870550529\"\n" +
             "          },\n" +
             "          \"succeeds\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=desc\\u0026cursor=18970870550529-1\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=desc\\u0026cursor=18970870550529-1\"\n" +
             "          },\n" +
             "          \"precedes\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=asc\\u0026cursor=18970870550529-1\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=asc\\u0026cursor=18970870550529-1\"\n" +
             "          }\n" +
             "        },\n" +
             "        \"id\": \"0000018970870550529-0000000001\",\n" +
@@ -195,17 +225,17 @@ public class EffectDeserializerTest extends TestCase {
             "        \"account\": \"GA6U5X6WOPNKKDKQULBR7IDHDBAQKOWPHYEC7WSXHZBFEYFD3XVZAKOO\",\n" +
             "        \"type\": \"account_home_domain_updated\",\n" +
             "        \"type_i\": 5,\n" +
-            "        \"home_domain\": \"livenet.digitalbits.io\"\n" +
+            "        \"home_domain\": \"digitalbits.io\"\n" +
             "      }";
 
     AccountHomeDomainUpdatedEffectResponse effect = (AccountHomeDomainUpdatedEffectResponse) GsonSingleton.getInstance().fromJson(json, EffectResponse.class);
 
     assertEquals(effect.getAccount(), "GA6U5X6WOPNKKDKQULBR7IDHDBAQKOWPHYEC7WSXHZBFEYFD3XVZAKOO");
-    assertEquals(effect.getHomeDomain(), "livenet.digitalbits.io");
+    assertEquals(effect.getHomeDomain(), "digitalbits.io");
 
-    assertEquals(effect.getLinks().getOperation().getHref(), "http://frontier.testnet.digitalbits.io/operations/18970870550529");
-    assertEquals(effect.getLinks().getSucceeds().getHref(), "http://frontier.testnet.digitalbits.io/effects?order=desc&cursor=18970870550529-1");
-    assertEquals(effect.getLinks().getPrecedes().getHref(), "http://frontier.testnet.digitalbits.io/effects?order=asc&cursor=18970870550529-1");
+    assertEquals(effect.getLinks().getOperation().getHref(), "http://frontier-testnet.digitalbits.io/operations/18970870550529");
+    assertEquals(effect.getLinks().getSucceeds().getHref(), "http://frontier-testnet.digitalbits.io/effects?order=desc&cursor=18970870550529-1");
+    assertEquals(effect.getLinks().getPrecedes().getHref(), "http://frontier-testnet.digitalbits.io/effects?order=asc&cursor=18970870550529-1");
   }
 
   @Test
@@ -213,13 +243,13 @@ public class EffectDeserializerTest extends TestCase {
     String json = "{\n" +
             "        \"_links\": {\n" +
             "          \"operation\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/operations/18970870550529\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/18970870550529\"\n" +
             "          },\n" +
             "          \"succeeds\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=desc\\u0026cursor=18970870550529-1\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=desc\\u0026cursor=18970870550529-1\"\n" +
             "          },\n" +
             "          \"precedes\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=asc\\u0026cursor=18970870550529-1\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=asc\\u0026cursor=18970870550529-1\"\n" +
             "          }\n" +
             "        },\n" +
             "        \"id\": \"0000018970870550529-0000000001\",\n" +
@@ -237,9 +267,86 @@ public class EffectDeserializerTest extends TestCase {
     assertEquals(effect.getAuthRequiredFlag(), new Boolean(false));
     assertEquals(effect.getAuthRevokableFlag(), new Boolean(true));
 
-    assertEquals(effect.getLinks().getOperation().getHref(), "http://frontier.testnet.digitalbits.io/operations/18970870550529");
-    assertEquals(effect.getLinks().getSucceeds().getHref(), "http://frontier.testnet.digitalbits.io/effects?order=desc&cursor=18970870550529-1");
-    assertEquals(effect.getLinks().getPrecedes().getHref(), "http://frontier.testnet.digitalbits.io/effects?order=asc&cursor=18970870550529-1");
+    assertEquals(effect.getLinks().getOperation().getHref(), "http://frontier-testnet.digitalbits.io/operations/18970870550529");
+    assertEquals(effect.getLinks().getSucceeds().getHref(), "http://frontier-testnet.digitalbits.io/effects?order=desc&cursor=18970870550529-1");
+    assertEquals(effect.getLinks().getPrecedes().getHref(), "http://frontier-testnet.digitalbits.io/effects?order=asc&cursor=18970870550529-1");
+  }
+
+  @Test
+  public void testDeserializeClaimableBalanceClaimantCreatedEffect() {
+    String json = "{\n" +
+            "        \"_links\": {\n" +
+            "          \"operation\": {\n" +
+            "            \"href\": \"https://frontier.livenet.digitalbits.io/operations/158104892991700993\"\n" +
+            "          },\n" +
+            "          \"succeeds\": {\n" +
+            "            \"href\": \"https://frontier.livenet.digitalbits.io/effects?order=desc&cursor=158104892991700993-2\"\n" +
+            "          },\n" +
+            "          \"precedes\": {\n" +
+            "            \"href\": \"https://frontier.livenet.digitalbits.io/effects?order=asc&cursor=158104892991700993-2\"\n" +
+            "          }\n" +
+            "        },\n" +
+            "        \"id\": \"0158104892991700993-0000000002\",\n" +
+            "        \"paging_token\": \"158104892991700993-2\",\n" +
+            "        \"account\": \"GBQECQVAS2FJ7DLCUXDASZAJQLWPXNTCR2DGBPKQDO3QS66TJXLRHFIK\",\n" +
+            "        \"type\": \"claimable_balance_claimant_created\",\n" +
+            "        \"type_i\": 51,\n" +
+            "        \"created_at\": \"2021-08-11T16:16:32Z\",\n" +
+            "        \"asset\": \"KES:GA2MSSZKJOU6RNL3EJKH3S5TB5CDYTFQFWRYFGUJVIN5I6AOIRTLUHTO\",\n" +
+            "        \"balance_id\": \"0000000071d3336fa6b6cf81fcbeda85a503ccfabc786ab1066594716f3f9551ea4b89ca\",\n" +
+            "        \"amount\": \"0.0012200\",\n" +
+            "        \"predicate\": {\n" +
+            "          \"abs_before\": \"+39121901036-03-29T15:30:22Z\",\n" +
+            "          \"abs_before_epoch\": \"1234567890982222222\"\n" +
+            "        }\n" +
+            "      }\n";
+
+    ClaimableBalanceClaimantCreatedEffectResponse effect = (ClaimableBalanceClaimantCreatedEffectResponse) GsonSingleton.getInstance().fromJson(json, EffectResponse.class);
+
+    assertEquals(effect.getAccount(), "GBQECQVAS2FJ7DLCUXDASZAJQLWPXNTCR2DGBPKQDO3QS66TJXLRHFIK");
+    assertEquals(effect.getCreatedAt(), "2021-08-11T16:16:32Z");
+    assertEquals(effect.getBalanceId(), "0000000071d3336fa6b6cf81fcbeda85a503ccfabc786ab1066594716f3f9551ea4b89ca");
+    assertEquals(effect.getType(), "claimable_balance_claimant_created");
+    assertSame(effect.getPredicate().getClass(), Predicate.AbsBefore.class);
+    assertEquals(((Predicate.AbsBefore)effect.getPredicate()).getTimestampSeconds(), 1234567890982222222L);
+  }
+
+  @Test
+  public void testBackwardsCompatAbsBeforeEpoch() {
+    String json = "{\n" +
+            "        \"_links\": {\n" +
+            "          \"operation\": {\n" +
+            "            \"href\": \"https://frontier.livenet.digitalbits.io/operations/158104892991700993\"\n" +
+            "          },\n" +
+            "          \"succeeds\": {\n" +
+            "            \"href\": \"https://frontier.livenet.digitalbits.io/effects?order=desc&cursor=158104892991700993-2\"\n" +
+            "          },\n" +
+            "          \"precedes\": {\n" +
+            "            \"href\": \"https://frontier.livenet.digitalbits.io/effects?order=asc&cursor=158104892991700993-2\"\n" +
+            "          }\n" +
+            "        },\n" +
+            "        \"id\": \"0158104892991700993-0000000002\",\n" +
+            "        \"paging_token\": \"158104892991700993-2\",\n" +
+            "        \"account\": \"GBQECQVAS2FJ7DLCUXDASZAJQLWPXNTCR2DGBPKQDO3QS66TJXLRHFIK\",\n" +
+            "        \"type\": \"claimable_balance_claimant_created\",\n" +
+            "        \"type_i\": 51,\n" +
+            "        \"created_at\": \"2021-08-11T16:16:32Z\",\n" +
+            "        \"asset\": \"KES:GA2MSSZKJOU6RNL3EJKH3S5TB5CDYTFQFWRYFGUJVIN5I6AOIRTLUHTO\",\n" +
+            "        \"balance_id\": \"0000000071d3336fa6b6cf81fcbeda85a503ccfabc786ab1066594716f3f9551ea4b89ca\",\n" +
+            "        \"amount\": \"0.0012200\",\n" +
+            "        \"predicate\": {\n" +
+            "          \"abs_before\": \"2021-11-21T07:24:10Z\"\n" +
+            "        }\n" +
+            "      }\n";
+
+    ClaimableBalanceClaimantCreatedEffectResponse effect = (ClaimableBalanceClaimantCreatedEffectResponse) GsonSingleton.getInstance().fromJson(json, EffectResponse.class);
+
+    assertEquals(effect.getAccount(), "GBQECQVAS2FJ7DLCUXDASZAJQLWPXNTCR2DGBPKQDO3QS66TJXLRHFIK");
+    assertEquals(effect.getCreatedAt(), "2021-08-11T16:16:32Z");
+    assertEquals(effect.getBalanceId(), "0000000071d3336fa6b6cf81fcbeda85a503ccfabc786ab1066594716f3f9551ea4b89ca");
+    assertEquals(effect.getType(), "claimable_balance_claimant_created");
+    assertSame(effect.getPredicate().getClass(), Predicate.AbsBefore.class);
+    assertEquals(((Predicate.AbsBefore)effect.getPredicate()).getTimestampSeconds(), 1637479450L);
   }
 
   @Test
@@ -275,13 +382,13 @@ public class EffectDeserializerTest extends TestCase {
     String json = "{\n" +
             "        \"_links\": {\n" +
             "          \"operation\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/operations/65571265859585\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/65571265859585\"\n" +
             "          },\n" +
             "          \"succeeds\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=desc\\u0026cursor=65571265859585-3\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=desc\\u0026cursor=65571265859585-3\"\n" +
             "          },\n" +
             "          \"precedes\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=asc\\u0026cursor=65571265859585-3\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=asc\\u0026cursor=65571265859585-3\"\n" +
             "          }\n" +
             "        },\n" +
             "        \"id\": \"0000065571265859585-0000000003\",\n" +
@@ -299,9 +406,9 @@ public class EffectDeserializerTest extends TestCase {
     assertEquals(effect.getWeight(), new Integer(1));
     assertEquals(effect.getPublicKey(), "GB24LPGAHYTWRYOXIDKXLI55SBRWW42T3TZKDAAW3BOJX4ADVIATFTLU");
 
-    assertEquals(effect.getLinks().getOperation().getHref(), "http://frontier.testnet.digitalbits.io/operations/65571265859585");
-    assertEquals(effect.getLinks().getSucceeds().getHref(), "http://frontier.testnet.digitalbits.io/effects?order=desc&cursor=65571265859585-3");
-    assertEquals(effect.getLinks().getPrecedes().getHref(), "http://frontier.testnet.digitalbits.io/effects?order=asc&cursor=65571265859585-3");
+    assertEquals(effect.getLinks().getOperation().getHref(), "http://frontier-testnet.digitalbits.io/operations/65571265859585");
+    assertEquals(effect.getLinks().getSucceeds().getHref(), "http://frontier-testnet.digitalbits.io/effects?order=desc&cursor=65571265859585-3");
+    assertEquals(effect.getLinks().getPrecedes().getHref(), "http://frontier-testnet.digitalbits.io/effects?order=asc&cursor=65571265859585-3");
   }
 
   @Test
@@ -309,13 +416,13 @@ public class EffectDeserializerTest extends TestCase {
     String json = "{\n" +
             "        \"_links\": {\n" +
             "          \"operation\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/operations/43658342567940\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/43658342567940\"\n" +
             "          },\n" +
             "          \"succeeds\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=desc\\u0026cursor=43658342567940-2\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=desc\\u0026cursor=43658342567940-2\"\n" +
             "          },\n" +
             "          \"precedes\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=asc\\u0026cursor=43658342567940-2\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=asc\\u0026cursor=43658342567940-2\"\n" +
             "          }\n" +
             "        },\n" +
             "        \"id\": \"0000043658342567940-0000000002\",\n" +
@@ -333,9 +440,9 @@ public class EffectDeserializerTest extends TestCase {
     assertEquals(effect.getWeight(), new Integer(0));
     assertEquals(effect.getPublicKey(), "GCFKT6BN2FEASCEVDNHEC4LLFT2KLUUPEMKM4OJPEJ65H2AEZ7IH4RV6");
 
-    assertEquals(effect.getLinks().getOperation().getHref(), "http://frontier.testnet.digitalbits.io/operations/43658342567940");
-    assertEquals(effect.getLinks().getSucceeds().getHref(), "http://frontier.testnet.digitalbits.io/effects?order=desc&cursor=43658342567940-2");
-    assertEquals(effect.getLinks().getPrecedes().getHref(), "http://frontier.testnet.digitalbits.io/effects?order=asc&cursor=43658342567940-2");
+    assertEquals(effect.getLinks().getOperation().getHref(), "http://frontier-testnet.digitalbits.io/operations/43658342567940");
+    assertEquals(effect.getLinks().getSucceeds().getHref(), "http://frontier-testnet.digitalbits.io/effects?order=desc&cursor=43658342567940-2");
+    assertEquals(effect.getLinks().getPrecedes().getHref(), "http://frontier-testnet.digitalbits.io/effects?order=asc&cursor=43658342567940-2");
   }
 
   @Test
@@ -343,13 +450,13 @@ public class EffectDeserializerTest extends TestCase {
     String json = "{\n" +
             "        \"_links\": {\n" +
             "          \"operation\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/operations/33788507721730\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/33788507721730\"\n" +
             "          },\n" +
             "          \"succeeds\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=desc\\u0026cursor=33788507721730-2\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=desc\\u0026cursor=33788507721730-2\"\n" +
             "          },\n" +
             "          \"precedes\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=asc\\u0026cursor=33788507721730-2\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=asc\\u0026cursor=33788507721730-2\"\n" +
             "          }\n" +
             "        },\n" +
             "        \"id\": \"0000033788507721730-0000000002\",\n" +
@@ -367,9 +474,9 @@ public class EffectDeserializerTest extends TestCase {
     assertEquals(effect.getWeight(), new Integer(2));
     assertEquals(effect.getPublicKey(), "GA6U5X6WOPNKKDKQULBR7IDHDBAQKOWPHYEC7WSXHZBFEYFD3XVZAKOO");
 
-    assertEquals(effect.getLinks().getOperation().getHref(), "http://frontier.testnet.digitalbits.io/operations/33788507721730");
-    assertEquals(effect.getLinks().getSucceeds().getHref(), "http://frontier.testnet.digitalbits.io/effects?order=desc&cursor=33788507721730-2");
-    assertEquals(effect.getLinks().getPrecedes().getHref(), "http://frontier.testnet.digitalbits.io/effects?order=asc&cursor=33788507721730-2");
+    assertEquals(effect.getLinks().getOperation().getHref(), "http://frontier-testnet.digitalbits.io/operations/33788507721730");
+    assertEquals(effect.getLinks().getSucceeds().getHref(), "http://frontier-testnet.digitalbits.io/effects?order=desc&cursor=33788507721730-2");
+    assertEquals(effect.getLinks().getPrecedes().getHref(), "http://frontier-testnet.digitalbits.io/effects?order=asc&cursor=33788507721730-2");
   }
 
   @Test
@@ -377,13 +484,13 @@ public class EffectDeserializerTest extends TestCase {
     String json = "{\n" +
             "        \"_links\": {\n" +
             "          \"operation\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/operations/33788507721730\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/33788507721730\"\n" +
             "          },\n" +
             "          \"succeeds\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=desc\\u0026cursor=33788507721730-2\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=desc\\u0026cursor=33788507721730-2\"\n" +
             "          },\n" +
             "          \"precedes\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=asc\\u0026cursor=33788507721730-2\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=asc\\u0026cursor=33788507721730-2\"\n" +
             "          }\n" +
             "        },\n" +
             "        \"id\": \"0000033788507721730-0000000002\",\n" +
@@ -400,12 +507,40 @@ public class EffectDeserializerTest extends TestCase {
     TrustlineCreatedEffectResponse effect = (TrustlineCreatedEffectResponse) GsonSingleton.getInstance().fromJson(json, EffectResponse.class);
 
     assertEquals(effect.getAccount(), "GA6U5X6WOPNKKDKQULBR7IDHDBAQKOWPHYEC7WSXHZBFEYFD3XVZAKOO");
-    TestCase.assertEquals(effect.getAsset(), Asset.createNonNativeAsset("EUR", "GAZN3PPIDQCSP5JD4ETQQQ2IU2RMFYQTAL4NNQZUGLLO2XJJJ3RDSDGA"));
+    TestCase.assertEquals(effect.getAsset(), create(null, "EUR", "GAZN3PPIDQCSP5JD4ETQQQ2IU2RMFYQTAL4NNQZUGLLO2XJJJ3RDSDGA"));
     assertEquals(effect.getLimit(), "1000.0");
 
-    assertEquals(effect.getLinks().getOperation().getHref(), "http://frontier.testnet.digitalbits.io/operations/33788507721730");
-    assertEquals(effect.getLinks().getSucceeds().getHref(), "http://frontier.testnet.digitalbits.io/effects?order=desc&cursor=33788507721730-2");
-    assertEquals(effect.getLinks().getPrecedes().getHref(), "http://frontier.testnet.digitalbits.io/effects?order=asc&cursor=33788507721730-2");
+    assertEquals(effect.getLinks().getOperation().getHref(), "http://frontier-testnet.digitalbits.io/operations/33788507721730");
+    assertEquals(effect.getLinks().getSucceeds().getHref(), "http://frontier-testnet.digitalbits.io/effects?order=desc&cursor=33788507721730-2");
+    assertEquals(effect.getLinks().getPrecedes().getHref(), "http://frontier-testnet.digitalbits.io/effects?order=asc&cursor=33788507721730-2");
+  }
+
+  @Test
+  public void testDeserializeLiquidityPoolTrustlineCreatedEffect() {
+    String json = "{\n" +
+            "        \"_links\": {\n" +
+            "          \"operation\": {\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/33788507721730\"\n" +
+            "          },\n" +
+            "          \"succeeds\": {\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=desc\\u0026cursor=33788507721730-2\"\n" +
+            "          },\n" +
+            "          \"precedes\": {\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=asc\\u0026cursor=33788507721730-2\"\n" +
+            "          }\n" +
+            "        },\n" +
+            "        \"id\": \"0000033788507721730-0000000002\",\n" +
+            "        \"paging_token\": \"33788507721730-2\",\n" +
+            "        \"account\": \"GA6U5X6WOPNKKDKQULBR7IDHDBAQKOWPHYEC7WSXHZBFEYFD3XVZAKOO\",\n" +
+            "        \"type\": \"trustline_created\",\n" +
+            "        \"type_i\": 20,\n" +
+            "        \"asset_type\": \"liquidity_pool_shares\",\n" +
+            "        \"liquidity_pool_id\": \"02449937ed825805b7a945bb6c027b53dfaf140983c1a1a64c42a81edd89b5e0\",\n" +
+            "        \"limit\": \"1000.0\"\n" +
+            "      }";
+
+    TrustlineCreatedEffectResponse effect = (TrustlineCreatedEffectResponse) GsonSingleton.getInstance().fromJson(json, EffectResponse.class);
+    TestCase.assertEquals(effect.getAsset(), create("liquidity_pool_shares", null, null, "02449937ed825805b7a945bb6c027b53dfaf140983c1a1a64c42a81edd89b5e0"));
   }
 
   @Test
@@ -413,13 +548,13 @@ public class EffectDeserializerTest extends TestCase {
     String json = "{\n" +
             "        \"_links\": {\n" +
             "          \"operation\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/operations/33788507721730\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/33788507721730\"\n" +
             "          },\n" +
             "          \"succeeds\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=desc\\u0026cursor=33788507721730-2\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=desc\\u0026cursor=33788507721730-2\"\n" +
             "          },\n" +
             "          \"precedes\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=asc\\u0026cursor=33788507721730-2\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=asc\\u0026cursor=33788507721730-2\"\n" +
             "          }\n" +
             "        },\n" +
             "        \"id\": \"0000033788507721730-0000000002\",\n" +
@@ -436,12 +571,40 @@ public class EffectDeserializerTest extends TestCase {
     TrustlineRemovedEffectResponse effect = (TrustlineRemovedEffectResponse) GsonSingleton.getInstance().fromJson(json, EffectResponse.class);
 
     assertEquals(effect.getAccount(), "GA6U5X6WOPNKKDKQULBR7IDHDBAQKOWPHYEC7WSXHZBFEYFD3XVZAKOO");
-    assertEquals(effect.getAsset(), Asset.createNonNativeAsset("EUR", "GAZN3PPIDQCSP5JD4ETQQQ2IU2RMFYQTAL4NNQZUGLLO2XJJJ3RDSDGA"));
+    assertEquals(effect.getAsset(), create(null,"EUR", "GAZN3PPIDQCSP5JD4ETQQQ2IU2RMFYQTAL4NNQZUGLLO2XJJJ3RDSDGA"));
     assertEquals(effect.getLimit(), "0.0");
 
-    assertEquals(effect.getLinks().getOperation().getHref(), "http://frontier.testnet.digitalbits.io/operations/33788507721730");
-    assertEquals(effect.getLinks().getSucceeds().getHref(), "http://frontier.testnet.digitalbits.io/effects?order=desc&cursor=33788507721730-2");
-    assertEquals(effect.getLinks().getPrecedes().getHref(), "http://frontier.testnet.digitalbits.io/effects?order=asc&cursor=33788507721730-2");
+    assertEquals(effect.getLinks().getOperation().getHref(), "http://frontier-testnet.digitalbits.io/operations/33788507721730");
+    assertEquals(effect.getLinks().getSucceeds().getHref(), "http://frontier-testnet.digitalbits.io/effects?order=desc&cursor=33788507721730-2");
+    assertEquals(effect.getLinks().getPrecedes().getHref(), "http://frontier-testnet.digitalbits.io/effects?order=asc&cursor=33788507721730-2");
+  }
+
+  @Test
+  public void testDeserializeLiquidityPoolTrustlineRemovedEffect() {
+    String json = "{\n" +
+            "        \"_links\": {\n" +
+            "          \"operation\": {\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/33788507721730\"\n" +
+            "          },\n" +
+            "          \"succeeds\": {\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=desc\\u0026cursor=33788507721730-2\"\n" +
+            "          },\n" +
+            "          \"precedes\": {\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=asc\\u0026cursor=33788507721730-2\"\n" +
+            "          }\n" +
+            "        },\n" +
+            "        \"id\": \"0000033788507721730-0000000002\",\n" +
+            "        \"paging_token\": \"33788507721730-2\",\n" +
+            "        \"account\": \"GA6U5X6WOPNKKDKQULBR7IDHDBAQKOWPHYEC7WSXHZBFEYFD3XVZAKOO\",\n" +
+            "        \"type\": \"trustline_removed\",\n" +
+            "        \"type_i\": 21,\n" +
+            "        \"asset_type\": \"liquidity_pool_shares\",\n" +
+            "        \"liquidity_pool_id\": \"02449937ed825805b7a945bb6c027b53dfaf140983c1a1a64c42a81edd89b5e0\",\n" +
+            "        \"limit\": \"0.0\"\n" +
+            "      }";
+
+    TrustlineRemovedEffectResponse effect = (TrustlineRemovedEffectResponse) GsonSingleton.getInstance().fromJson(json, EffectResponse.class);
+    TestCase.assertEquals(effect.getAsset(), create("liquidity_pool_shares", null, null, "02449937ed825805b7a945bb6c027b53dfaf140983c1a1a64c42a81edd89b5e0"));
   }
 
   @Test
@@ -449,13 +612,13 @@ public class EffectDeserializerTest extends TestCase {
     String json = "{\n" +
             "        \"_links\": {\n" +
             "          \"operation\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/operations/33788507721730\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/33788507721730\"\n" +
             "          },\n" +
             "          \"succeeds\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=desc\\u0026cursor=33788507721730-2\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=desc\\u0026cursor=33788507721730-2\"\n" +
             "          },\n" +
             "          \"precedes\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=asc\\u0026cursor=33788507721730-2\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=asc\\u0026cursor=33788507721730-2\"\n" +
             "          }\n" +
             "        },\n" +
             "        \"id\": \"0000033788507721730-0000000002\",\n" +
@@ -472,12 +635,40 @@ public class EffectDeserializerTest extends TestCase {
     TrustlineUpdatedEffectResponse effect = (TrustlineUpdatedEffectResponse) GsonSingleton.getInstance().fromJson(json, EffectResponse.class);
 
     assertEquals(effect.getAccount(), "GA6U5X6WOPNKKDKQULBR7IDHDBAQKOWPHYEC7WSXHZBFEYFD3XVZAKOO");
-    assertEquals(effect.getAsset(), Asset.createNonNativeAsset("TESTTEST", "GAZN3PPIDQCSP5JD4ETQQQ2IU2RMFYQTAL4NNQZUGLLO2XJJJ3RDSDGA"));
+    assertEquals(effect.getAsset(), create(null,"TESTTEST", "GAZN3PPIDQCSP5JD4ETQQQ2IU2RMFYQTAL4NNQZUGLLO2XJJJ3RDSDGA"));
     assertEquals(effect.getLimit(), "100.0");
 
-    assertEquals(effect.getLinks().getOperation().getHref(), "http://frontier.testnet.digitalbits.io/operations/33788507721730");
-    assertEquals(effect.getLinks().getSucceeds().getHref(), "http://frontier.testnet.digitalbits.io/effects?order=desc&cursor=33788507721730-2");
-    assertEquals(effect.getLinks().getPrecedes().getHref(), "http://frontier.testnet.digitalbits.io/effects?order=asc&cursor=33788507721730-2");
+    assertEquals(effect.getLinks().getOperation().getHref(), "http://frontier-testnet.digitalbits.io/operations/33788507721730");
+    assertEquals(effect.getLinks().getSucceeds().getHref(), "http://frontier-testnet.digitalbits.io/effects?order=desc&cursor=33788507721730-2");
+    assertEquals(effect.getLinks().getPrecedes().getHref(), "http://frontier-testnet.digitalbits.io/effects?order=asc&cursor=33788507721730-2");
+  }
+
+  @Test
+  public void testDeserializeLiquidityPoolTrustlineUpdatedEffect() {
+    String json = "{\n" +
+            "        \"_links\": {\n" +
+            "          \"operation\": {\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/33788507721730\"\n" +
+            "          },\n" +
+            "          \"succeeds\": {\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=desc\\u0026cursor=33788507721730-2\"\n" +
+            "          },\n" +
+            "          \"precedes\": {\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=asc\\u0026cursor=33788507721730-2\"\n" +
+            "          }\n" +
+            "        },\n" +
+            "        \"id\": \"0000033788507721730-0000000002\",\n" +
+            "        \"paging_token\": \"33788507721730-2\",\n" +
+            "        \"account\": \"GA6U5X6WOPNKKDKQULBR7IDHDBAQKOWPHYEC7WSXHZBFEYFD3XVZAKOO\",\n" +
+            "        \"type\": \"trustline_updated\",\n" +
+            "        \"type_i\": 22,\n" +
+            "        \"asset_type\": \"liquidity_pool_shares\",\n" +
+            "        \"liquidity_pool_id\": \"02449937ed825805b7a945bb6c027b53dfaf140983c1a1a64c42a81edd89b5e0\",\n" +
+            "        \"limit\": \"100.0\"\n" +
+            "      }";
+
+    TrustlineUpdatedEffectResponse effect = (TrustlineUpdatedEffectResponse) GsonSingleton.getInstance().fromJson(json, EffectResponse.class);
+    TestCase.assertEquals(effect.getAsset(), create("liquidity_pool_shares", null, null, "02449937ed825805b7a945bb6c027b53dfaf140983c1a1a64c42a81edd89b5e0"));
   }
 
   @Test
@@ -485,13 +676,13 @@ public class EffectDeserializerTest extends TestCase {
     String json = "{\n" +
             "        \"_links\": {\n" +
             "          \"operation\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/operations/33788507721730\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/33788507721730\"\n" +
             "          },\n" +
             "          \"succeeds\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=desc\\u0026cursor=33788507721730-2\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=desc\\u0026cursor=33788507721730-2\"\n" +
             "          },\n" +
             "          \"precedes\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=asc\\u0026cursor=33788507721730-2\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=asc\\u0026cursor=33788507721730-2\"\n" +
             "          }\n" +
             "        },\n" +
             "        \"id\": \"0000033788507721730-0000000002\",\n" +
@@ -511,9 +702,9 @@ public class EffectDeserializerTest extends TestCase {
     assertEquals(effect.getAssetCode(), "TESTTEST");
     assertEquals(effect.getTrustor(), "GB3E4AB4VWXJDUVN4Z3CPBU5HTMWVEQXONZYVDFMHQD6333KHCOL3UBR");
 
-    assertEquals(effect.getLinks().getOperation().getHref(), "http://frontier.testnet.digitalbits.io/operations/33788507721730");
-    assertEquals(effect.getLinks().getSucceeds().getHref(), "http://frontier.testnet.digitalbits.io/effects?order=desc&cursor=33788507721730-2");
-    assertEquals(effect.getLinks().getPrecedes().getHref(), "http://frontier.testnet.digitalbits.io/effects?order=asc&cursor=33788507721730-2");
+    assertEquals(effect.getLinks().getOperation().getHref(), "http://frontier-testnet.digitalbits.io/operations/33788507721730");
+    assertEquals(effect.getLinks().getSucceeds().getHref(), "http://frontier-testnet.digitalbits.io/effects?order=desc&cursor=33788507721730-2");
+    assertEquals(effect.getLinks().getPrecedes().getHref(), "http://frontier-testnet.digitalbits.io/effects?order=asc&cursor=33788507721730-2");
   }
 
   @Test
@@ -521,13 +712,13 @@ public class EffectDeserializerTest extends TestCase {
     String json = "{\n" +
         "        \"_links\": {\n" +
         "          \"operation\": {\n" +
-        "            \"href\": \"http://frontier.testnet.digitalbits.io/operations/33788507721730\"\n" +
+        "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/33788507721730\"\n" +
         "          },\n" +
         "          \"succeeds\": {\n" +
-        "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=desc\\u0026cursor=33788507721730-2\"\n" +
+        "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=desc\\u0026cursor=33788507721730-2\"\n" +
         "          },\n" +
         "          \"precedes\": {\n" +
-        "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=asc\\u0026cursor=33788507721730-2\"\n" +
+        "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=asc\\u0026cursor=33788507721730-2\"\n" +
         "          }\n" +
         "        },\n" +
         "        \"id\": \"0000033788507721730-0000000002\",\n" +
@@ -547,9 +738,9 @@ public class EffectDeserializerTest extends TestCase {
     assertEquals(effect.getAssetCode(), "TESTTEST");
     assertEquals(effect.getTrustor(), "GB3E4AB4VWXJDUVN4Z3CPBU5HTMWVEQXONZYVDFMHQD6333KHCOL3UBR");
 
-    assertEquals(effect.getLinks().getOperation().getHref(), "http://frontier.testnet.digitalbits.io/operations/33788507721730");
-    assertEquals(effect.getLinks().getSucceeds().getHref(), "http://frontier.testnet.digitalbits.io/effects?order=desc&cursor=33788507721730-2");
-    assertEquals(effect.getLinks().getPrecedes().getHref(), "http://frontier.testnet.digitalbits.io/effects?order=asc&cursor=33788507721730-2");
+    assertEquals(effect.getLinks().getOperation().getHref(), "http://frontier-testnet.digitalbits.io/operations/33788507721730");
+    assertEquals(effect.getLinks().getSucceeds().getHref(), "http://frontier-testnet.digitalbits.io/effects?order=desc&cursor=33788507721730-2");
+    assertEquals(effect.getLinks().getPrecedes().getHref(), "http://frontier-testnet.digitalbits.io/effects?order=asc&cursor=33788507721730-2");
   }
 
 
@@ -558,13 +749,13 @@ public class EffectDeserializerTest extends TestCase {
     String json = "{\n" +
             "        \"_links\": {\n" +
             "          \"operation\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/operations/33788507721730\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/33788507721730\"\n" +
             "          },\n" +
             "          \"succeeds\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=desc\\u0026cursor=33788507721730-2\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=desc\\u0026cursor=33788507721730-2\"\n" +
             "          },\n" +
             "          \"precedes\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=asc\\u0026cursor=33788507721730-2\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=asc\\u0026cursor=33788507721730-2\"\n" +
             "          }\n" +
             "        },\n" +
             "        \"id\": \"0000033788507721730-0000000002\",\n" +
@@ -584,9 +775,9 @@ public class EffectDeserializerTest extends TestCase {
     assertEquals(effect.getAssetCode(), "EUR");
     assertEquals(effect.getTrustor(), "GB3E4AB4VWXJDUVN4Z3CPBU5HTMWVEQXONZYVDFMHQD6333KHCOL3UBR");
 
-    assertEquals(effect.getLinks().getOperation().getHref(), "http://frontier.testnet.digitalbits.io/operations/33788507721730");
-    assertEquals(effect.getLinks().getSucceeds().getHref(), "http://frontier.testnet.digitalbits.io/effects?order=desc&cursor=33788507721730-2");
-    assertEquals(effect.getLinks().getPrecedes().getHref(), "http://frontier.testnet.digitalbits.io/effects?order=asc&cursor=33788507721730-2");
+    assertEquals(effect.getLinks().getOperation().getHref(), "http://frontier-testnet.digitalbits.io/operations/33788507721730");
+    assertEquals(effect.getLinks().getSucceeds().getHref(), "http://frontier-testnet.digitalbits.io/effects?order=desc&cursor=33788507721730-2");
+    assertEquals(effect.getLinks().getPrecedes().getHref(), "http://frontier-testnet.digitalbits.io/effects?order=asc&cursor=33788507721730-2");
   }
 
   @Test
@@ -594,13 +785,13 @@ public class EffectDeserializerTest extends TestCase {
     String json = "{\n" +
             "        \"_links\": {\n" +
             "          \"operation\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/operations/33788507721730\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/33788507721730\"\n" +
             "          },\n" +
             "          \"succeeds\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=desc\\u0026cursor=33788507721730-2\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=desc\\u0026cursor=33788507721730-2\"\n" +
             "          },\n" +
             "          \"precedes\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=asc\\u0026cursor=33788507721730-2\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=asc\\u0026cursor=33788507721730-2\"\n" +
             "          }\n" +
             "        },\n" +
             "        \"id\": \"0000033788507721730-0000000002\",\n" +
@@ -626,13 +817,13 @@ public class EffectDeserializerTest extends TestCase {
     assertEquals(effect.getSeller(), "GCVHDLN6EHZBYW2M3BQIY32C23E4GPIRZZDBNF2Q73DAZ5VJDRGSMYRB");
     assertEquals(effect.getOfferId(), new Long(1));
     assertEquals(effect.getSoldAmount(), "1000.0");
-    assertEquals(effect.getSoldAsset(), Asset.createNonNativeAsset("EUR", "GCWVFBJ24754I5GXG4JOEB72GJCL3MKWC7VAEYWKGQHPVH3ENPNBSKWS"));
+    assertEquals(effect.getSoldAsset(), create(null,"EUR", "GCWVFBJ24754I5GXG4JOEB72GJCL3MKWC7VAEYWKGQHPVH3ENPNBSKWS"));
     assertEquals(effect.getBoughtAmount(), "60.0");
-    assertEquals(effect.getBoughtAsset(), Asset.createNonNativeAsset("TESTTEST", "GAHXPUDP3AK6F2QQM4FIRBGPNGKLRDDSTQCVKEXXKKRHJZUUQ23D5BU7"));
+    assertEquals(effect.getBoughtAsset(), create(null,"TESTTEST", "GAHXPUDP3AK6F2QQM4FIRBGPNGKLRDDSTQCVKEXXKKRHJZUUQ23D5BU7"));
 
-    assertEquals(effect.getLinks().getOperation().getHref(), "http://frontier.testnet.digitalbits.io/operations/33788507721730");
-    assertEquals(effect.getLinks().getSucceeds().getHref(), "http://frontier.testnet.digitalbits.io/effects?order=desc&cursor=33788507721730-2");
-    assertEquals(effect.getLinks().getPrecedes().getHref(), "http://frontier.testnet.digitalbits.io/effects?order=asc&cursor=33788507721730-2");
+    assertEquals(effect.getLinks().getOperation().getHref(), "http://frontier-testnet.digitalbits.io/operations/33788507721730");
+    assertEquals(effect.getLinks().getSucceeds().getHref(), "http://frontier-testnet.digitalbits.io/effects?order=desc&cursor=33788507721730-2");
+    assertEquals(effect.getLinks().getPrecedes().getHref(), "http://frontier-testnet.digitalbits.io/effects?order=asc&cursor=33788507721730-2");
   }
 
   @Test
@@ -819,9 +1010,74 @@ public class EffectDeserializerTest extends TestCase {
     assertTrue(effect.getClawbackEnabled());
     assertFalse(effect.getAuthorizedToMaintainLiabilities());
 
-    assertEquals(effect.getAsset(), Asset.createNonNativeAsset("EUR", "GCWVFBJ24754I5GXG4JOEB72GJCL3MKWC7VAEYWKGQHPVH3ENPNBSKWS"));
+    assertEquals(effect.getAsset(), create(null,"EUR", "GCWVFBJ24754I5GXG4JOEB72GJCL3MKWC7VAEYWKGQHPVH3ENPNBSKWS"));
     assertEquals(effect.getAssetIssuer(), "GCWVFBJ24754I5GXG4JOEB72GJCL3MKWC7VAEYWKGQHPVH3ENPNBSKWS");
     assertEquals(effect.getAssetCode(), "EUR");
     assertEquals(effect.getAssetType(), "credit_alphanum4");
+  }
+
+  @Test
+  public void testDeserializeLiquidityPoolTradeEffect() {
+    String json = "      {\n" +
+        "        \"_links\": {\n" +
+        "          \"operation\": {\n" +
+        "            \"href\": \"https://frontier.testnet.digitalbits.io/operations/2091275411030017\"\n" +
+        "          },\n" +
+        "          \"succeeds\": {\n" +
+        "            \"href\": \"https://frontier.testnet.digitalbits.io/effects?order=desc\\u0026cursor=2091275411030017-3\"\n" +
+        "          },\n" +
+        "          \"precedes\": {\n" +
+        "            \"href\": \"https://frontier.testnet.digitalbits.io/effects?order=asc\\u0026cursor=2091275411030017-3\"\n" +
+        "          }\n" +
+        "        },\n" +
+        "        \"id\": \"0002091275411030017-0000000003\",\n" +
+        "        \"paging_token\": \"2091275411030017-3\",\n" +
+        "        \"account\": \"GDUZE3MB2TJVVCGM7LLYUXGZTZNRQS6OEESTQDO4RGI7QZPI2VYOIC4G\",\n" +
+        "        \"type\": \"liquidity_pool_trade\",\n" +
+        "        \"type_i\": 92,\n" +
+        "        \"created_at\": \"2021-10-15T00:15:07Z\",\n" +
+        "        \"liquidity_pool\": {\n" +
+        "          \"id\": \"af961c246cc51e6eda2441482f09cf6b1478e30b34e47daf86c860f753d8f04c\",\n" +
+        "          \"fee_bp\": 30,\n" +
+        "          \"type\": \"constant_product\",\n" +
+        "          \"total_trustlines\": \"3\",\n" +
+        "          \"total_shares\": \"18560.5392046\",\n" +
+        "          \"reserves\": [\n" +
+        "            {\n" +
+        "              \"asset\": \"native\",\n" +
+        "              \"amount\": \"6080.9091224\"\n" +
+        "            },\n" +
+        "            {\n" +
+        "              \"asset\": \"ARST:GB7TAYRUZGE6TVT7NHP5SMIZRNQA6PLM423EYISAOAP3MKYIQMVYP2JO\",\n" +
+        "              \"amount\": \"56817.1796745\"\n" +
+        "            }\n" +
+        "          ]\n" +
+        "        },\n" +
+        "        \"sold\": {\n" +
+        "          \"asset\": \"native\",\n" +
+        "          \"amount\": \"0.1067066\"\n" +
+        "        },\n" +
+        "        \"bought\": {\n" +
+        "          \"asset\": \"ARST:GB7TAYRUZGE6TVT7NHP5SMIZRNQA6PLM423EYISAOAP3MKYIQMVYP2JO\",\n" +
+        "          \"amount\": \"1.0000000\"\n" +
+        "        }\n" +
+        "      }";
+    LiquidityPoolTradeEffectResponse effect = (LiquidityPoolTradeEffectResponse) GsonSingleton.getInstance().fromJson(json, EffectResponse.class);
+
+    assertEquals(effect.getType(), "liquidity_pool_trade");
+
+    assertEquals(effect.getAccount(), "GDUZE3MB2TJVVCGM7LLYUXGZTZNRQS6OEESTQDO4RGI7QZPI2VYOIC4G");
+    assertEquals(effect.getCreatedAt(), "2021-10-15T00:15:07Z");
+    assertEquals(effect.getLiquidityPool().getID().toString(), "af961c246cc51e6eda2441482f09cf6b1478e30b34e47daf86c860f753d8f04c");
+    assertEquals(effect.getLiquidityPool().getFeeBP(), Integer.valueOf(30));
+    assertEquals(effect.getLiquidityPool().getType(), LiquidityPoolType.LIQUIDITY_POOL_CONSTANT_PRODUCT);
+    assertEquals(effect.getLiquidityPool().getTotalTrustlines(), Long.valueOf(3));
+    assertEquals(effect.getLiquidityPool().getTotalShares(), "18560.5392046");
+    assertTrue(Arrays.equals(effect.getLiquidityPool().getReserves(), new AssetAmount[]{
+        new AssetAmount(create("native"), "6080.9091224"),
+        new AssetAmount(create("ARST:GB7TAYRUZGE6TVT7NHP5SMIZRNQA6PLM423EYISAOAP3MKYIQMVYP2JO"), "56817.1796745")
+    }));
+    assertEquals(effect.getSold(), new AssetAmount(create("native"), "0.1067066"));
+    assertEquals(effect.getBought(), new AssetAmount(create("ARST:GB7TAYRUZGE6TVT7NHP5SMIZRNQA6PLM423EYISAOAP3MKYIQMVYP2JO"), "1.0000000"));
   }
 }

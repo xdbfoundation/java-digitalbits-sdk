@@ -18,7 +18,12 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class ServerTest {
     private final String publicRootResponse = "{\n" +
@@ -79,11 +84,11 @@ public class ServerTest {
 
     private final String failureResponse =
             "{\n" +
-            "  \"type\": \"https://digitalbits.org/frontier-errors/transaction_failed\",\n" +
+            "  \"type\": \"https://developers.digitalbits.io/api/errors/http-status-codes/frontier-specific/transaction-failed/\",\n" +
             "  \"title\": \"Transaction Failed\",\n" +
             "  \"status\": 400,\n" +
             "  \"detail\": \"TODO\",\n" +
-            "  \"instance\": \"frontier.testnet-01.internal\",\n" +
+            "  \"instance\": \"frontier-testnet-001.prd.digitalbits001.internal.digitalbits-ops.com/IxhaI70Tqo-112305\",\n" +
             "  \"extras\": {\n" +
             "    \"envelope_xdr\": \"AAAAAK4Pg4OEkjGmSN0AN37K/dcKyKPT2DC90xvjjawKp136AAAAZAAKsZQAAAABAAAAAAAAAAEAAAAJSmF2YSBGVFchAAAAAAAAAQAAAAAAAAABAAAAAG9wfBI7rRYoBlX3qRa0KOnI75W5BaPU6NbyKmm2t71MAAAAAAAAAAABMS0AAAAAAAAAAAEKp136AAAAQOWEjL+Sm+WP2puE9dLIxWlOibIEOz8PsXyG77jOCVdHZfQvkgB49Mu5wqKCMWWIsDSLFekwUsLaunvmXrpyBwQ=\",\n" +
             "    \"result_codes\": {\n" +
@@ -98,16 +103,16 @@ public class ServerTest {
 
     private final String timeoutResponse =
             "{\n" +
-            "  \"type\": \"https://digitalbits.org/frontier-errors/transaction_failed\",\n" +
+            "  \"type\": \"https://developers.digitalbits.io/api/errors/http-status-codes/frontier-specific/transaction-failed/\",\n" +
             "  \"title\": \"Timeout\",\n" +
             "  \"status\": 403,\n" +
             "  \"detail\": \"TODO\",\n" +
-            "  \"instance\": \"frontier.testnet-01.internal\"\n" +
+            "  \"instance\": \"frontier-testnet-001.prd.digitalbits001.internal.digitalbits-ops.com/IxhaI70Tqo-112305\"\n" +
             "}";
 
     private final String internalServerErrorResponse =
             "{\n" +
-            "  \"type\":     \"https://digitalbits.org/docs/frontier/problems/server_error\",\n" +
+            "  \"type\":     \"https://developers.digitalbits.io/api/errors/http-status-codes/standard/\",\n" +
             "  \"title\":    \"Internal Server Error\",\n" +
             "  \"status\":   500,\n" +
             "  \"instance\": \"d3465740-ec3a-4a0b-9d4a-c9ea734ce58a\"\n" +
@@ -172,11 +177,11 @@ public class ServerTest {
         KeyPair destination = KeyPair.fromAccountId("GDW6AUTBXTOC7FIKUO5BOO3OGLK4SF7ZPOBLMQHMZDI45J2Z6VXRB5NR");
 
         Account account = new Account(source.getAccountId(), 2908908335136768L);
-        Transaction.Builder builder = new Transaction.Builder(AccountConverter.enableMuxed(), account, network)
+        TransactionBuilder builder = new TransactionBuilder(AccountConverter.enableMuxed(), account, network)
                 .addOperation(new CreateAccountOperation.Builder(destination.getAccountId(), "2000").build())
                 .addMemo(Memo.text("Hello world!"))
                 .setBaseFee(Transaction.MIN_BASE_FEE)
-                .setTimeout(Transaction.Builder.TIMEOUT_INFINITE);
+                .setTimeout(TransactionPreconditions.TIMEOUT_INFINITE);
 
         assertEquals(1, builder.getOperationsCount());
         Transaction transaction = builder.build();
@@ -367,12 +372,12 @@ public class ServerTest {
 
         KeyPair source = KeyPair.fromSecretSeed("SDQXFKA32UVQHUTLYJ42N56ZUEM5PNVVI4XE7EA5QFMLA2DHDCQX3GPY");
         Account account = new Account(source.getAccountId(), 1L);
-        Transaction transaction = new Transaction.Builder(AccountConverter.enableMuxed(), account, Network.PUBLIC)
+        Transaction transaction = new TransactionBuilder(AccountConverter.enableMuxed(), account, Network.PUBLIC)
                 .addOperation(new PaymentOperation.Builder(DESTINATION_ACCOUNT_MEMO_REQUIRED_A, new AssetTypeNative(), "10").build())
                 .addOperation(new PathPaymentStrictReceiveOperation.Builder(new AssetTypeNative(), "10", DESTINATION_ACCOUNT_MEMO_REQUIRED_B, new AssetTypeCreditAlphaNum4("BTC", "GA7GYB3QGLTZNHNGXN3BMANS6TC7KJT3TCGTR763J4JOU4QHKL37RVV2"), "5").build())
                 .addOperation(new PathPaymentStrictSendOperation.Builder(new AssetTypeNative(), "10", DESTINATION_ACCOUNT_MEMO_REQUIRED_C, new AssetTypeCreditAlphaNum4("BTC", "GA7GYB3QGLTZNHNGXN3BMANS6TC7KJT3TCGTR763J4JOU4QHKL37RVV2"), "5").build())
                 .addOperation(new AccountMergeOperation.Builder(DESTINATION_ACCOUNT_MEMO_REQUIRED_D).build())
-                .setTimeout(Transaction.Builder.TIMEOUT_INFINITE)
+                .setTimeout(TransactionPreconditions.TIMEOUT_INFINITE)
                 .addMemo(new MemoText("Hello, DigitalBits."))
                 .setBaseFee(100)
                 .build();
@@ -391,12 +396,12 @@ public class ServerTest {
 
         KeyPair source = KeyPair.fromSecretSeed("SDQXFKA32UVQHUTLYJ42N56ZUEM5PNVVI4XE7EA5QFMLA2DHDCQX3GPY");
         Account account = new Account(source.getAccountId(), 1L);
-        Transaction transaction = new Transaction.Builder(AccountConverter.enableMuxed(), account, Network.PUBLIC)
+        Transaction transaction = new TransactionBuilder(AccountConverter.enableMuxed(), account, Network.PUBLIC)
             .addOperation(new PaymentOperation.Builder(DESTINATION_ACCOUNT_MEMO_ID, new AssetTypeNative(), "10").build())
             .addOperation(new PathPaymentStrictReceiveOperation.Builder(new AssetTypeNative(), "10", DESTINATION_ACCOUNT_MEMO_ID, new AssetTypeCreditAlphaNum4("BTC", "GA7GYB3QGLTZNHNGXN3BMANS6TC7KJT3TCGTR763J4JOU4QHKL37RVV2"), "5").build())
             .addOperation(new PathPaymentStrictSendOperation.Builder(new AssetTypeNative(), "10", DESTINATION_ACCOUNT_MEMO_ID, new AssetTypeCreditAlphaNum4("BTC", "GA7GYB3QGLTZNHNGXN3BMANS6TC7KJT3TCGTR763J4JOU4QHKL37RVV2"), "5").build())
             .addOperation(new AccountMergeOperation.Builder(DESTINATION_ACCOUNT_MEMO_ID).build())
-            .setTimeout(Transaction.Builder.TIMEOUT_INFINITE)
+            .setTimeout(TransactionPreconditions.TIMEOUT_INFINITE)
             .setBaseFee(100)
             .build();
 
@@ -415,12 +420,12 @@ public class ServerTest {
 
         KeyPair source = KeyPair.fromSecretSeed("SDQXFKA32UVQHUTLYJ42N56ZUEM5PNVVI4XE7EA5QFMLA2DHDCQX3GPY");
         Account account = new Account(source.getAccountId(), 1L);
-        Transaction transaction = new Transaction.Builder(AccountConverter.enableMuxed(), account, Network.PUBLIC)
+        Transaction transaction = new TransactionBuilder(AccountConverter.enableMuxed(), account, Network.PUBLIC)
                 .addOperation(new PaymentOperation.Builder(DESTINATION_ACCOUNT_MEMO_REQUIRED_A, new AssetTypeNative(), "10").build())
                 .addOperation(new PathPaymentStrictReceiveOperation.Builder(new AssetTypeNative(), "10", DESTINATION_ACCOUNT_NO_MEMO_REQUIRED, new AssetTypeCreditAlphaNum4("BTC", "GA7GYB3QGLTZNHNGXN3BMANS6TC7KJT3TCGTR763J4JOU4QHKL37RVV2"), "5").build())
                 .addOperation(new PathPaymentStrictSendOperation.Builder(new AssetTypeNative(), "10", DESTINATION_ACCOUNT_NO_MEMO_REQUIRED, new AssetTypeCreditAlphaNum4("BTC", "GA7GYB3QGLTZNHNGXN3BMANS6TC7KJT3TCGTR763J4JOU4QHKL37RVV2"), "5").build())
                 .addOperation(new AccountMergeOperation.Builder(DESTINATION_ACCOUNT_NO_MEMO_REQUIRED).build())
-                .setTimeout(Transaction.Builder.TIMEOUT_INFINITE)
+                .setTimeout(TransactionPreconditions.TIMEOUT_INFINITE)
                 .setBaseFee(100)
                 .build();
         transaction.sign(source);
@@ -438,12 +443,12 @@ public class ServerTest {
 
         KeyPair source = KeyPair.fromSecretSeed("SDQXFKA32UVQHUTLYJ42N56ZUEM5PNVVI4XE7EA5QFMLA2DHDCQX3GPY");
         Account account = new Account(source.getAccountId(), 1L);
-        Transaction transaction = new Transaction.Builder(AccountConverter.enableMuxed(), account, Network.PUBLIC)
+        Transaction transaction = new TransactionBuilder(AccountConverter.enableMuxed(), account, Network.PUBLIC)
                 .addOperation(new PaymentOperation.Builder(DESTINATION_ACCOUNT_MEMO_REQUIRED_A, new AssetTypeNative(), "10").build())
                 .addOperation(new PathPaymentStrictReceiveOperation.Builder(new AssetTypeNative(), "10", DESTINATION_ACCOUNT_NO_MEMO_REQUIRED, new AssetTypeCreditAlphaNum4("BTC", "GA7GYB3QGLTZNHNGXN3BMANS6TC7KJT3TCGTR763J4JOU4QHKL37RVV2"), "5").build())
                 .addOperation(new PathPaymentStrictSendOperation.Builder(new AssetTypeNative(), "10", DESTINATION_ACCOUNT_NO_MEMO_REQUIRED, new AssetTypeCreditAlphaNum4("BTC", "GA7GYB3QGLTZNHNGXN3BMANS6TC7KJT3TCGTR763J4JOU4QHKL37RVV2"), "5").build())
                 .addOperation(new AccountMergeOperation.Builder(DESTINATION_ACCOUNT_NO_MEMO_REQUIRED).build())
-                .setTimeout(Transaction.Builder.TIMEOUT_INFINITE)
+                .setTimeout(TransactionPreconditions.TIMEOUT_INFINITE)
                 .setBaseFee(100)
                 .build();
         transaction.sign(source);
@@ -476,12 +481,12 @@ public class ServerTest {
 
         KeyPair source = KeyPair.fromSecretSeed("SDQXFKA32UVQHUTLYJ42N56ZUEM5PNVVI4XE7EA5QFMLA2DHDCQX3GPY");
         Account account = new Account(source.getAccountId(), 1L);
-        Transaction transaction = new Transaction.Builder(AccountConverter.enableMuxed(), account, Network.PUBLIC)
+        Transaction transaction = new TransactionBuilder(AccountConverter.enableMuxed(), account, Network.PUBLIC)
                 .addOperation(new PaymentOperation.Builder(DESTINATION_ACCOUNT_NO_MEMO_REQUIRED, new AssetTypeNative(), "10").build())
                 .addOperation(new PathPaymentStrictReceiveOperation.Builder(new AssetTypeNative(), "10", DESTINATION_ACCOUNT_MEMO_REQUIRED_B, new AssetTypeCreditAlphaNum4("BTC", "GA7GYB3QGLTZNHNGXN3BMANS6TC7KJT3TCGTR763J4JOU4QHKL37RVV2"), "5").build())
                 .addOperation(new PathPaymentStrictSendOperation.Builder(new AssetTypeNative(), "10", DESTINATION_ACCOUNT_NO_MEMO_REQUIRED, new AssetTypeCreditAlphaNum4("BTC", "GA7GYB3QGLTZNHNGXN3BMANS6TC7KJT3TCGTR763J4JOU4QHKL37RVV2"), "5").build())
                 .addOperation(new AccountMergeOperation.Builder(DESTINATION_ACCOUNT_NO_MEMO_REQUIRED).build())
-                .setTimeout(Transaction.Builder.TIMEOUT_INFINITE)
+                .setTimeout(TransactionPreconditions.TIMEOUT_INFINITE)
                 .setBaseFee(100)
                 .build();
         transaction.sign(source);
@@ -514,12 +519,12 @@ public class ServerTest {
 
         KeyPair source = KeyPair.fromSecretSeed("SDQXFKA32UVQHUTLYJ42N56ZUEM5PNVVI4XE7EA5QFMLA2DHDCQX3GPY");
         Account account = new Account(source.getAccountId(), 1L);
-        Transaction transaction = new Transaction.Builder(AccountConverter.enableMuxed(), account, Network.PUBLIC)
+        Transaction transaction = new TransactionBuilder(AccountConverter.enableMuxed(), account, Network.PUBLIC)
                 .addOperation(new PaymentOperation.Builder(DESTINATION_ACCOUNT_NO_MEMO_REQUIRED, new AssetTypeNative(), "10").build())
                 .addOperation(new PathPaymentStrictReceiveOperation.Builder(new AssetTypeNative(), "10", DESTINATION_ACCOUNT_NO_MEMO_REQUIRED, new AssetTypeCreditAlphaNum4("BTC", "GA7GYB3QGLTZNHNGXN3BMANS6TC7KJT3TCGTR763J4JOU4QHKL37RVV2"), "5").build())
                 .addOperation(new PathPaymentStrictSendOperation.Builder(new AssetTypeNative(), "10", DESTINATION_ACCOUNT_MEMO_REQUIRED_C, new AssetTypeCreditAlphaNum4("BTC", "GA7GYB3QGLTZNHNGXN3BMANS6TC7KJT3TCGTR763J4JOU4QHKL37RVV2"), "5").build())
                 .addOperation(new AccountMergeOperation.Builder(DESTINATION_ACCOUNT_NO_MEMO_REQUIRED).build())
-                .setTimeout(Transaction.Builder.TIMEOUT_INFINITE)
+                .setTimeout(TransactionPreconditions.TIMEOUT_INFINITE)
                 .setBaseFee(100)
                 .build();
         transaction.sign(source);
@@ -552,12 +557,12 @@ public class ServerTest {
 
         KeyPair source = KeyPair.fromSecretSeed("SDQXFKA32UVQHUTLYJ42N56ZUEM5PNVVI4XE7EA5QFMLA2DHDCQX3GPY");
         Account account = new Account(source.getAccountId(), 1L);
-        Transaction transaction = new Transaction.Builder(AccountConverter.enableMuxed(), account, Network.PUBLIC)
+        Transaction transaction = new TransactionBuilder(AccountConverter.enableMuxed(), account, Network.PUBLIC)
                 .addOperation(new PaymentOperation.Builder(DESTINATION_ACCOUNT_NO_MEMO_REQUIRED, new AssetTypeNative(), "10").build())
                 .addOperation(new PathPaymentStrictReceiveOperation.Builder(new AssetTypeNative(), "10", DESTINATION_ACCOUNT_NO_MEMO_REQUIRED, new AssetTypeCreditAlphaNum4("BTC", "GA7GYB3QGLTZNHNGXN3BMANS6TC7KJT3TCGTR763J4JOU4QHKL37RVV2"), "5").build())
                 .addOperation(new PathPaymentStrictSendOperation.Builder(new AssetTypeNative(), "10", DESTINATION_ACCOUNT_NO_MEMO_REQUIRED, new AssetTypeCreditAlphaNum4("BTC", "GA7GYB3QGLTZNHNGXN3BMANS6TC7KJT3TCGTR763J4JOU4QHKL37RVV2"), "5").build())
                 .addOperation(new AccountMergeOperation.Builder(DESTINATION_ACCOUNT_MEMO_REQUIRED_D).build())
-                .setTimeout(Transaction.Builder.TIMEOUT_INFINITE)
+                .setTimeout(TransactionPreconditions.TIMEOUT_INFINITE)
                 .setBaseFee(100)
                 .build();
         transaction.sign(source);
@@ -590,12 +595,12 @@ public class ServerTest {
 
         KeyPair source = KeyPair.fromSecretSeed("SDQXFKA32UVQHUTLYJ42N56ZUEM5PNVVI4XE7EA5QFMLA2DHDCQX3GPY");
         Account account = new Account(source.getAccountId(), 1L);
-        Transaction transaction = new Transaction.Builder(AccountConverter.enableMuxed(), account, Network.PUBLIC)
+        Transaction transaction = new TransactionBuilder(AccountConverter.enableMuxed(), account, Network.PUBLIC)
                 .addOperation(new PaymentOperation.Builder(DESTINATION_ACCOUNT_NO_MEMO_REQUIRED, new AssetTypeNative(), "10").build())
                 .addOperation(new PathPaymentStrictReceiveOperation.Builder(new AssetTypeNative(), "10", DESTINATION_ACCOUNT_NO_MEMO_REQUIRED, new AssetTypeCreditAlphaNum4("BTC", "GA7GYB3QGLTZNHNGXN3BMANS6TC7KJT3TCGTR763J4JOU4QHKL37RVV2"), "5").build())
                 .addOperation(new PathPaymentStrictSendOperation.Builder(new AssetTypeNative(), "10", DESTINATION_ACCOUNT_MEMO_REQUIRED_C, new AssetTypeCreditAlphaNum4("BTC", "GA7GYB3QGLTZNHNGXN3BMANS6TC7KJT3TCGTR763J4JOU4QHKL37RVV2"), "5").build())
                 .addOperation(new AccountMergeOperation.Builder(DESTINATION_ACCOUNT_MEMO_REQUIRED_D).build())
-                .setTimeout(Transaction.Builder.TIMEOUT_INFINITE)
+                .setTimeout(TransactionPreconditions.TIMEOUT_INFINITE)
                 .setBaseFee(100)
                 .build();
         transaction.sign(source);
@@ -628,13 +633,13 @@ public class ServerTest {
 
         KeyPair source = KeyPair.fromSecretSeed("SDQXFKA32UVQHUTLYJ42N56ZUEM5PNVVI4XE7EA5QFMLA2DHDCQX3GPY");
         Account account = new Account(source.getAccountId(), 1L);
-        Transaction transaction = new Transaction.Builder(AccountConverter.enableMuxed(), account, Network.PUBLIC)
+        Transaction transaction = new TransactionBuilder(AccountConverter.enableMuxed(), account, Network.PUBLIC)
                 .addOperation(new ManageDataOperation.Builder("Hello", "DigitalBits".getBytes()).build())
                 .addOperation(new PaymentOperation.Builder(DESTINATION_ACCOUNT_MEMO_REQUIRED_A, new AssetTypeNative(), "10").build())
                 .addOperation(new PathPaymentStrictReceiveOperation.Builder(new AssetTypeNative(), "10", DESTINATION_ACCOUNT_MEMO_REQUIRED_A, new AssetTypeCreditAlphaNum4("BTC", "GA7GYB3QGLTZNHNGXN3BMANS6TC7KJT3TCGTR763J4JOU4QHKL37RVV2"), "5").build())
                 .addOperation(new PathPaymentStrictSendOperation.Builder(new AssetTypeNative(), "10", DESTINATION_ACCOUNT_MEMO_REQUIRED_C, new AssetTypeCreditAlphaNum4("BTC", "GA7GYB3QGLTZNHNGXN3BMANS6TC7KJT3TCGTR763J4JOU4QHKL37RVV2"), "5").build())
                 .addOperation(new AccountMergeOperation.Builder(DESTINATION_ACCOUNT_NO_MEMO_REQUIRED).build())
-                .setTimeout(Transaction.Builder.TIMEOUT_INFINITE)
+                .setTimeout(TransactionPreconditions.TIMEOUT_INFINITE)
                 .setBaseFee(100)
                 .build();
         transaction.sign(source);
@@ -667,12 +672,12 @@ public class ServerTest {
 
         KeyPair source = KeyPair.fromSecretSeed("SDQXFKA32UVQHUTLYJ42N56ZUEM5PNVVI4XE7EA5QFMLA2DHDCQX3GPY");
         Account account = new Account(source.getAccountId(), 1L);
-        Transaction transaction = new Transaction.Builder(AccountConverter.enableMuxed(), account, Network.PUBLIC)
+        Transaction transaction = new TransactionBuilder(AccountConverter.enableMuxed(), account, Network.PUBLIC)
                 .addOperation(new PaymentOperation.Builder(DESTINATION_ACCOUNT_NO_FOUND, new AssetTypeNative(), "10").build())
                 .addOperation(new PathPaymentStrictReceiveOperation.Builder(new AssetTypeNative(), "10", DESTINATION_ACCOUNT_NO_FOUND, new AssetTypeCreditAlphaNum4("BTC", "GA7GYB3QGLTZNHNGXN3BMANS6TC7KJT3TCGTR763J4JOU4QHKL37RVV2"), "5").build())
                 .addOperation(new PathPaymentStrictSendOperation.Builder(new AssetTypeNative(), "10", DESTINATION_ACCOUNT_NO_FOUND, new AssetTypeCreditAlphaNum4("BTC", "GA7GYB3QGLTZNHNGXN3BMANS6TC7KJT3TCGTR763J4JOU4QHKL37RVV2"), "5").build())
                 .addOperation(new AccountMergeOperation.Builder(DESTINATION_ACCOUNT_NO_FOUND).build())
-                .setTimeout(Transaction.Builder.TIMEOUT_INFINITE)
+                .setTimeout(TransactionPreconditions.TIMEOUT_INFINITE)
                 .setBaseFee(100)
                 .build();
         transaction.sign(source);
@@ -690,14 +695,14 @@ public class ServerTest {
 
         KeyPair source = KeyPair.fromSecretSeed("SDQXFKA32UVQHUTLYJ42N56ZUEM5PNVVI4XE7EA5QFMLA2DHDCQX3GPY");
         Account account = new Account(source.getAccountId(), 1L);
-        Transaction transaction = new Transaction.Builder(AccountConverter.enableMuxed(), account, Network.PUBLIC)
+        Transaction transaction = new TransactionBuilder(AccountConverter.enableMuxed(), account, Network.PUBLIC)
                 .addOperation(new PaymentOperation.Builder(DESTINATION_ACCOUNT_FETCH_ERROR, new AssetTypeNative(), "10").build())
                 .addOperation(new PaymentOperation.Builder(DESTINATION_ACCOUNT_MEMO_REQUIRED_A, new AssetTypeNative(), "10").build())
                 .addOperation(new PaymentOperation.Builder(DESTINATION_ACCOUNT_MEMO_REQUIRED_B, new AssetTypeNative(), "10").build())
                 .addOperation(new PathPaymentStrictReceiveOperation.Builder(new AssetTypeNative(), "10", DESTINATION_ACCOUNT_MEMO_REQUIRED_C, new AssetTypeCreditAlphaNum4("BTC", "GA7GYB3QGLTZNHNGXN3BMANS6TC7KJT3TCGTR763J4JOU4QHKL37RVV2"), "5").build())
                 .addOperation(new PathPaymentStrictSendOperation.Builder(new AssetTypeNative(), "10", DESTINATION_ACCOUNT_MEMO_REQUIRED_D, new AssetTypeCreditAlphaNum4("BTC", "GA7GYB3QGLTZNHNGXN3BMANS6TC7KJT3TCGTR763J4JOU4QHKL37RVV2"), "5").build())
                 .addOperation(new AccountMergeOperation.Builder(DESTINATION_ACCOUNT_MEMO_REQUIRED_D).build())
-                .setTimeout(Transaction.Builder.TIMEOUT_INFINITE)
+                .setTimeout(TransactionPreconditions.TIMEOUT_INFINITE)
                 .setBaseFee(100)
                 .build();
         transaction.sign(source);

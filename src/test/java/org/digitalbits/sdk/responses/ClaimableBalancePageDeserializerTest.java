@@ -34,7 +34,7 @@ public class ClaimableBalancePageDeserializerTest extends TestCase {
     Predicate.AbsBefore absBefore = (Predicate.AbsBefore)or.getInner().get(0);
     Predicate.RelBefore relBefore = (Predicate.RelBefore)or.getInner().get(1);
     assertEquals(absBefore.getDate().toString(), "2020-09-28T17:57:04Z");
-    assertEquals(relBefore.getSecondsSinceClose(), 12);
+    assertEquals(relBefore.getSecondsSinceClose(), 12L);
 
     assertEquals(claimableBalancePage.getRecords().get(1).getId(), "00000000ae76f49e8513d0922b6bcbc8a3f5c4c0a5161871f27924e08724646acab56cd3");
     assertEquals(claimableBalancePage.getRecords().get(1).getAsset(), Asset.create("native"));
@@ -62,13 +62,13 @@ public class ClaimableBalancePageDeserializerTest extends TestCase {
   String json = "{\n" +
       "  \"_links\": {\n" +
       "    \"self\": {\n" +
-      "      \"href\": \"https://frontier.livenet.digitalbits.io/claimable_balances?cursor=&limit=10&order=asc\"\n" +
+      "      \"href\": \"https://frontier-protocol14.digitalbits.io/claimable_balances?cursor=&limit=10&order=asc\"\n" +
       "    },\n" +
       "    \"next\": {\n" +
-      "      \"href\": \"https://frontier.livenet.digitalbits.io/claimable_balances?cursor=117663-00000000ae76f49e8513d0922b6bcbc8a3f5c4c0a5161871f27924e08724646acab56cd2&limit=10&order=asc\"\n" +
+      "      \"href\": \"https://frontier-protocol14.digitalbits.io/claimable_balances?cursor=117663-00000000ae76f49e8513d0922b6bcbc8a3f5c4c0a5161871f27924e08724646acab56cd2&limit=10&order=asc\"\n" +
       "    },\n" +
       "    \"prev\": {\n" +
-      "      \"href\": \"https://frontier.livenet.digitalbits.io/claimable_balances?cursor=38888-00000000929b20b72e5890ab51c24f1cc46fa01c4f318d8d33367d24dd614cfdf5491072&limit=10&order=desc\"\n" +
+      "      \"href\": \"https://frontier-protocol14.digitalbits.io/claimable_balances?cursor=38888-00000000929b20b72e5890ab51c24f1cc46fa01c4f318d8d33367d24dd614cfdf5491072&limit=10&order=desc\"\n" +
       "    }\n" +
       "  },\n" +
       "  \"_embedded\": {\n" +
@@ -76,7 +76,7 @@ public class ClaimableBalancePageDeserializerTest extends TestCase {
       "      {\n" +
       "        \"_links\": {\n" +
       "          \"self\": {\n" +
-      "            \"href\": \"https://frontier.livenet.digitalbits.io/claimable_balances/00000000ae76f49e8513d0922b6bcbc8a3f5c4c0a5161871f27924e08724646acab56cd2\"\n" +
+      "            \"href\": \"https://frontier-protocol14.digitalbits.io/claimable_balances/00000000ae76f49e8513d0922b6bcbc8a3f5c4c0a5161871f27924e08724646acab56cd2\"\n" +
       "          }\n" +
       "        },\n" +
       "        \"id\": \"00000000ae76f49e8513d0922b6bcbc8a3f5c4c0a5161871f27924e08724646acab56cd2\",\n" +
@@ -104,7 +104,7 @@ public class ClaimableBalancePageDeserializerTest extends TestCase {
       "            {\n" +
       "        \"_links\": {\n" +
       "          \"self\": {\n" +
-      "            \"href\": \"https://frontier.livenet.digitalbits.io/claimable_balances/00000000ae76f49e8513d0922b6bcbc8a3f5c4c0a5161871f27924e08724646acab56cd3\"\n" +
+      "            \"href\": \"https://frontier-protocol14.digitalbits.io/claimable_balances/00000000ae76f49e8513d0922b6bcbc8a3f5c4c0a5161871f27924e08724646acab56cd3\"\n" +
       "          }\n" +
       "        },\n" +
       "        \"id\": \"00000000ae76f49e8513d0922b6bcbc8a3f5c4c0a5161871f27924e08724646acab56cd3\",\n" +

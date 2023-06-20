@@ -3,11 +3,41 @@ package io.digitalbits.sdk.responses;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import junit.framework.TestCase;
-
-import io.digitalbits.sdk.*;
-
 import org.junit.Test;
-import io.digitalbits.sdk.responses.operations.*;
+import io.digitalbits.sdk.Asset;
+import io.digitalbits.sdk.AssetAmount;
+import io.digitalbits.sdk.AssetTypeNative;
+import io.digitalbits.sdk.AssetTypePoolShare;
+import io.digitalbits.sdk.FormatException;
+import io.digitalbits.sdk.Predicate;
+import io.digitalbits.sdk.Price;
+import io.digitalbits.sdk.responses.operations.AccountMergeOperationResponse;
+import io.digitalbits.sdk.responses.operations.AllowTrustOperationResponse;
+import io.digitalbits.sdk.responses.operations.BumpSequenceOperationResponse;
+import io.digitalbits.sdk.responses.operations.ChangeTrustOperationResponse;
+import io.digitalbits.sdk.responses.operations.ClaimClaimableBalanceOperationResponse;
+import io.digitalbits.sdk.responses.operations.ClawbackClaimableBalanceOperationResponse;
+import io.digitalbits.sdk.responses.operations.ClawbackOperationResponse;
+import io.digitalbits.sdk.responses.operations.CreateAccountOperationResponse;
+import io.digitalbits.sdk.responses.operations.CreateClaimableBalanceOperationResponse;
+import io.digitalbits.sdk.responses.operations.EndSponsoringFutureReservesOperationResponse;
+import io.digitalbits.sdk.responses.operations.InflationOperationResponse;
+import io.digitalbits.sdk.responses.operations.LiquidityPoolDepositOperationResponse;
+import io.digitalbits.sdk.responses.operations.LiquidityPoolWithdrawOperationResponse;
+import io.digitalbits.sdk.responses.operations.ManageBuyOfferOperationResponse;
+import io.digitalbits.sdk.responses.operations.ManageDataOperationResponse;
+import io.digitalbits.sdk.responses.operations.OperationResponse;
+import io.digitalbits.sdk.responses.operations.PathPaymentStrictReceiveOperationResponse;
+import io.digitalbits.sdk.responses.operations.PathPaymentStrictSendOperationResponse;
+import io.digitalbits.sdk.responses.operations.PaymentOperationResponse;
+import io.digitalbits.sdk.responses.operations.SetOptionsOperationResponse;
+import io.digitalbits.sdk.responses.operations.SetTrustLineFlagsOperationResponse;
+
+import java.math.BigInteger;
+import java.util.Arrays;
+
+import static java.math.BigInteger.valueOf;
+import static io.digitalbits.sdk.Asset.create;
 
 public class OperationDeserializerTest extends TestCase {
   @Test
@@ -44,7 +74,7 @@ public class OperationDeserializerTest extends TestCase {
 
     assertEquals(operation.getSourceAccount(), "GD6WU64OEP5C4LRBH6NK3MHYIA2ADN6K6II6EXPNVUR3ERBXT4AN4ACD");
     assertEquals(operation.getPagingToken(), "3936840037961729");
-    assertEquals(operation.getId(), new Long(3936840037961729L));
+    assertEquals(operation.getId().longValue(), 3936840037961729L);
     assertNull(operation.isTransactionSuccessful());
     assertFalse(operation.getFunderMuxed().isPresent());
 
@@ -83,7 +113,7 @@ public class OperationDeserializerTest extends TestCase {
         "  \"account\": \"GAR4DDXYNSN2CORG3XQFLAPWYKTUMLZYHYWV4Y2YJJ4JO6ZJFXMJD7PT\",\n" +
         "  \"funder\": \"GAVH5JM5OKXGMQDS7YPRJ4MQCPXJUGH26LYQPQJ4SOMOJ4SXY472ZM7G\",\n" +
         "  \"funder_muxed\": \"MAVH5JM5OKXGMQDS7YPRJ4MQCPXJUGH26LYQPQJ4SOMOJ4SXY472YAAAAAAAAAABUSON4\",\n" +
-        "  \"funder_muxed_id\": \"420\",\n" +
+        "  \"funder_muxed_id\": \"18446744073709551615\",\n" +
         "  \"id\": 3936840037961729,\n" +
         "  \"paging_token\": \"3936840037961729\",\n" +
         "  \"source_account\": \"GBB4JST32UWKOLGYYSCEYBHBCOFL2TGBHDVOMZP462ET4ZRD4ULA7S2L\",\n" +
@@ -100,13 +130,13 @@ public class OperationDeserializerTest extends TestCase {
     assertEquals(operation.getSourceAccountMuxed().get(), new MuxedAccount(
         "MBB4JST32UWKOLGYYSCEYBHBCOFL2TGBHDVOMZP462ET4ZRD4ULA6AAAAAAAAAAAPN7BA",
         "GBB4JST32UWKOLGYYSCEYBHBCOFL2TGBHDVOMZP462ET4ZRD4ULA7S2L",
-        123l
+            valueOf(123l)
     ));
 
     assertEquals(operation.getFunder(), "GAVH5JM5OKXGMQDS7YPRJ4MQCPXJUGH26LYQPQJ4SOMOJ4SXY472ZM7G");
     assertEquals(operation.getFunderMuxed().get().getUnmuxedAddress(), "GAVH5JM5OKXGMQDS7YPRJ4MQCPXJUGH26LYQPQJ4SOMOJ4SXY472ZM7G");
     assertEquals(operation.getFunderMuxed().get().toString(), "MAVH5JM5OKXGMQDS7YPRJ4MQCPXJUGH26LYQPQJ4SOMOJ4SXY472YAAAAAAAAAABUSON4");
-    assertEquals(operation.getFunderMuxed().get().getId().longValue(), 420l);
+    assertEquals(operation.getFunderMuxed().get().getId(), new BigInteger("18446744073709551615"));
   }
 
   @Test
@@ -144,8 +174,8 @@ public class OperationDeserializerTest extends TestCase {
     PaymentOperationResponse operation = (PaymentOperationResponse) GsonSingleton.getInstance().fromJson(json, OperationResponse.class);
 
     assertEquals(operation.getSourceAccount(), "GB6NVEN5HSUBKMYCE5ZOWSK5K23TBWRUQLZY3KNMXUZ3AQ2ESC4MY4AQ");
-    assertEquals(operation.getId(), new Long(3940808587743233L));
-    assertEquals(operation.isTransactionSuccessful(), new Boolean(false));
+    assertEquals(operation.getId().longValue(), 3940808587743233L);
+    assertEquals(operation.isTransactionSuccessful().booleanValue(), false);
 
     assertEquals(operation.getFrom(), "GB6NVEN5HSUBKMYCE5ZOWSK5K23TBWRUQLZY3KNMXUZ3AQ2ESC4MY4AQ");
     assertEquals(operation.getTo(), "GDWNY2POLGK65VVKIH5KQSH7VWLKRTQ5M6ADLJAYC2UEHEBEARCZJWWI");
@@ -158,19 +188,19 @@ public class OperationDeserializerTest extends TestCase {
     String json = "{\n" +
             "        \"_links\": {\n" +
             "          \"self\": {\n" +
-            "            \"href\": \"//frontier.testnet.digitalbits.io/operations/3603043769651201\"\n" +
+            "            \"href\": \"//frontier-testnet.digitalbits.io/operations/3603043769651201\"\n" +
             "          },\n" +
             "          \"transaction\": {\n" +
-            "            \"href\": \"//frontier.testnet.digitalbits.io/transactions/b59dee0f85bc7efdefa1a6eec7a0b6f602d567cca6e7f587056d41d42ca48879\"\n" +
+            "            \"href\": \"//frontier-testnet.digitalbits.io/transactions/b59dee0f85bc7efdefa1a6eec7a0b6f602d567cca6e7f587056d41d42ca48879\"\n" +
             "          },\n" +
             "          \"effects\": {\n" +
-            "            \"href\": \"//frontier.testnet.digitalbits.io/operations/3603043769651201/effects\"\n" +
+            "            \"href\": \"//frontier-testnet.digitalbits.io/operations/3603043769651201/effects\"\n" +
             "          },\n" +
             "          \"succeeds\": {\n" +
-            "            \"href\": \"//frontier.testnet.digitalbits.io/effects?order=desc\\u0026cursor=3603043769651201\"\n" +
+            "            \"href\": \"//frontier-testnet.digitalbits.io/effects?order=desc\\u0026cursor=3603043769651201\"\n" +
             "          },\n" +
             "          \"precedes\": {\n" +
-            "            \"href\": \"//frontier.testnet.digitalbits.io/effects?order=asc\\u0026cursor=3603043769651201\"\n" +
+            "            \"href\": \"//frontier-testnet.digitalbits.io/effects?order=asc\\u0026cursor=3603043769651201\"\n" +
             "          }\n" +
             "        },\n" +
             "        \"id\": \"3603043769651201\",\n" +
@@ -189,12 +219,12 @@ public class OperationDeserializerTest extends TestCase {
 
     PaymentOperationResponse operation = (PaymentOperationResponse) GsonSingleton.getInstance().fromJson(json, OperationResponse.class);
 
-    assertEquals(operation.isTransactionSuccessful(), new Boolean(true));
+    assertEquals(operation.isTransactionSuccessful().booleanValue(),true);
 
     assertEquals(operation.getFrom(), "GAZN3PPIDQCSP5JD4ETQQQ2IU2RMFYQTAL4NNQZUGLLO2XJJJ3RDSDGA");
     assertEquals(operation.getTo(), "GBHUSIZZ7FS2OMLZVZ4HLWJMXQ336NFSXHYERD7GG54NRITDTEWWBBI6");
     assertEquals(operation.getAmount(), "1000000000.0");
-    assertEquals(operation.getAsset(), Asset.createNonNativeAsset("EUR", "GAZN3PPIDQCSP5JD4ETQQQ2IU2RMFYQTAL4NNQZUGLLO2XJJJ3RDSDGA"));
+    assertEquals(operation.getAsset(), create(null,"EUR", "GAZN3PPIDQCSP5JD4ETQQQ2IU2RMFYQTAL4NNQZUGLLO2XJJJ3RDSDGA"));
   }
 
   @Test
@@ -202,19 +232,19 @@ public class OperationDeserializerTest extends TestCase {
     String json = "{\n" +
             "        \"_links\": {\n" +
             "          \"self\": {\n" +
-            "            \"href\": \"//frontier.testnet.digitalbits.io/operations/3602979345141761\"\n" +
+            "            \"href\": \"//frontier-testnet.digitalbits.io/operations/3602979345141761\"\n" +
             "          },\n" +
             "          \"transaction\": {\n" +
-            "            \"href\": \"//frontier.testnet.digitalbits.io/transactions/1f265c075e8559ee4c21a32ae53337658e52d7504841adad4144c37143ea01a2\"\n" +
+            "            \"href\": \"//frontier-testnet.digitalbits.io/transactions/1f265c075e8559ee4c21a32ae53337658e52d7504841adad4144c37143ea01a2\"\n" +
             "          },\n" +
             "          \"effects\": {\n" +
-            "            \"href\": \"//frontier.testnet.digitalbits.io/operations/3602979345141761/effects\"\n" +
+            "            \"href\": \"//frontier-testnet.digitalbits.io/operations/3602979345141761/effects\"\n" +
             "          },\n" +
             "          \"succeeds\": {\n" +
-            "            \"href\": \"//frontier.testnet.digitalbits.io/effects?order=desc\\u0026cursor=3602979345141761\"\n" +
+            "            \"href\": \"//frontier-testnet.digitalbits.io/effects?order=desc\\u0026cursor=3602979345141761\"\n" +
             "          },\n" +
             "          \"precedes\": {\n" +
-            "            \"href\": \"//frontier.testnet.digitalbits.io/effects?order=asc\\u0026cursor=3602979345141761\"\n" +
+            "            \"href\": \"//frontier-testnet.digitalbits.io/effects?order=asc\\u0026cursor=3602979345141761\"\n" +
             "          }\n" +
             "        },\n" +
             "        \"id\": \"3602979345141761\",\n" +
@@ -237,7 +267,7 @@ public class OperationDeserializerTest extends TestCase {
     assertEquals(operation.getTrustor(), "GDZ55LVXECRTW4G36EZPTHI4XIYS5JUC33TUS22UOETVFVOQ77JXWY4F");
     assertEquals(operation.isAuthorize(), true);
     assertEquals(operation.isAuthorizedToMaintainLiabilities(), false);
-    assertEquals(operation.getAsset(), Asset.createNonNativeAsset("EUR", "GDIROJW2YHMSFZJJ4R5XWWNUVND5I45YEWS5DSFKXCHMADZ5V374U2LM"));
+    assertEquals(operation.getAsset(), create(null,"EUR", "GDIROJW2YHMSFZJJ4R5XWWNUVND5I45YEWS5DSFKXCHMADZ5V374U2LM"));
     assertFalse(operation.getTrusteeMuxed().isPresent());
   }
 
@@ -246,19 +276,19 @@ public class OperationDeserializerTest extends TestCase {
     String json = "{\n" +
         "        \"_links\": {\n" +
         "          \"self\": {\n" +
-        "            \"href\": \"//frontier.testnet.digitalbits.io/operations/3602979345141761\"\n" +
+        "            \"href\": \"//frontier-testnet.digitalbits.io/operations/3602979345141761\"\n" +
         "          },\n" +
         "          \"transaction\": {\n" +
-        "            \"href\": \"//frontier.testnet.digitalbits.io/transactions/1f265c075e8559ee4c21a32ae53337658e52d7504841adad4144c37143ea01a2\"\n" +
+        "            \"href\": \"//frontier-testnet.digitalbits.io/transactions/1f265c075e8559ee4c21a32ae53337658e52d7504841adad4144c37143ea01a2\"\n" +
         "          },\n" +
         "          \"effects\": {\n" +
-        "            \"href\": \"//frontier.testnet.digitalbits.io/operations/3602979345141761/effects\"\n" +
+        "            \"href\": \"//frontier-testnet.digitalbits.io/operations/3602979345141761/effects\"\n" +
         "          },\n" +
         "          \"succeeds\": {\n" +
-        "            \"href\": \"//frontier.testnet.digitalbits.io/effects?order=desc\\u0026cursor=3602979345141761\"\n" +
+        "            \"href\": \"//frontier-testnet.digitalbits.io/effects?order=desc\\u0026cursor=3602979345141761\"\n" +
         "          },\n" +
         "          \"precedes\": {\n" +
-        "            \"href\": \"//frontier.testnet.digitalbits.io/effects?order=asc\\u0026cursor=3602979345141761\"\n" +
+        "            \"href\": \"//frontier-testnet.digitalbits.io/effects?order=asc\\u0026cursor=3602979345141761\"\n" +
         "          }\n" +
         "        },\n" +
         "        \"id\": \"3602979345141761\",\n" +
@@ -291,19 +321,19 @@ public class OperationDeserializerTest extends TestCase {
     String json = "{\n" +
         "        \"_links\": {\n" +
         "          \"self\": {\n" +
-        "            \"href\": \"//frontier.testnet.digitalbits.io/operations/3602979345141761\"\n" +
+        "            \"href\": \"//frontier-testnet.digitalbits.io/operations/3602979345141761\"\n" +
         "          },\n" +
         "          \"transaction\": {\n" +
-        "            \"href\": \"//frontier.testnet.digitalbits.io/transactions/1f265c075e8559ee4c21a32ae53337658e52d7504841adad4144c37143ea01a2\"\n" +
+        "            \"href\": \"//frontier-testnet.digitalbits.io/transactions/1f265c075e8559ee4c21a32ae53337658e52d7504841adad4144c37143ea01a2\"\n" +
         "          },\n" +
         "          \"effects\": {\n" +
-        "            \"href\": \"//frontier.testnet.digitalbits.io/operations/3602979345141761/effects\"\n" +
+        "            \"href\": \"//frontier-testnet.digitalbits.io/operations/3602979345141761/effects\"\n" +
         "          },\n" +
         "          \"succeeds\": {\n" +
-        "            \"href\": \"//frontier.testnet.digitalbits.io/effects?order=desc\\u0026cursor=3602979345141761\"\n" +
+        "            \"href\": \"//frontier-testnet.digitalbits.io/effects?order=desc\\u0026cursor=3602979345141761\"\n" +
         "          },\n" +
         "          \"precedes\": {\n" +
-        "            \"href\": \"//frontier.testnet.digitalbits.io/effects?order=asc\\u0026cursor=3602979345141761\"\n" +
+        "            \"href\": \"//frontier-testnet.digitalbits.io/effects?order=asc\\u0026cursor=3602979345141761\"\n" +
         "          }\n" +
         "        },\n" +
         "        \"id\": \"3602979345141761\",\n" +
@@ -326,7 +356,7 @@ public class OperationDeserializerTest extends TestCase {
     assertEquals(operation.getTrustor(), "GDZ55LVXECRTW4G36EZPTHI4XIYS5JUC33TUS22UOETVFVOQ77JXWY4F");
     assertEquals(operation.isAuthorize(), false);
     assertEquals(operation.isAuthorizedToMaintainLiabilities(), true);
-    assertEquals(operation.getAsset(), Asset.createNonNativeAsset("EUR", "GDIROJW2YHMSFZJJ4R5XWWNUVND5I45YEWS5DSFKXCHMADZ5V374U2LM"));
+    assertEquals(operation.getAsset(), create(null,"EUR", "GDIROJW2YHMSFZJJ4R5XWWNUVND5I45YEWS5DSFKXCHMADZ5V374U2LM"));
   }
 
   @Test
@@ -334,19 +364,19 @@ public class OperationDeserializerTest extends TestCase {
     String json = "{\n" +
             "        \"_links\": {\n" +
             "          \"self\": {\n" +
-            "            \"href\": \"//frontier.testnet.digitalbits.io/operations/3602970755207169\"\n" +
+            "            \"href\": \"//frontier-testnet.digitalbits.io/operations/3602970755207169\"\n" +
             "          },\n" +
             "          \"transaction\": {\n" +
-            "            \"href\": \"//frontier.testnet.digitalbits.io/transactions/8d409a788543895843d269c3f97a2d6a2ebca6e9f8f9a7ae593457b5c0ba6644\"\n" +
+            "            \"href\": \"//frontier-testnet.digitalbits.io/transactions/8d409a788543895843d269c3f97a2d6a2ebca6e9f8f9a7ae593457b5c0ba6644\"\n" +
             "          },\n" +
             "          \"effects\": {\n" +
-            "            \"href\": \"//frontier.testnet.digitalbits.io/operations/3602970755207169/effects\"\n" +
+            "            \"href\": \"//frontier-testnet.digitalbits.io/operations/3602970755207169/effects\"\n" +
             "          },\n" +
             "          \"succeeds\": {\n" +
-            "            \"href\": \"//frontier.testnet.digitalbits.io/effects?order=desc\\u0026cursor=3602970755207169\"\n" +
+            "            \"href\": \"//frontier-testnet.digitalbits.io/effects?order=desc\\u0026cursor=3602970755207169\"\n" +
             "          },\n" +
             "          \"precedes\": {\n" +
-            "            \"href\": \"//frontier.testnet.digitalbits.io/effects?order=asc\\u0026cursor=3602970755207169\"\n" +
+            "            \"href\": \"//frontier-testnet.digitalbits.io/effects?order=asc\\u0026cursor=3602970755207169\"\n" +
             "          }\n" +
             "        },\n" +
             "        \"id\": \"3602970755207169\",\n" +
@@ -364,11 +394,52 @@ public class OperationDeserializerTest extends TestCase {
 
     ChangeTrustOperationResponse operation = (ChangeTrustOperationResponse) GsonSingleton.getInstance().fromJson(json, OperationResponse.class);
 
+    operation.getAsset();
     assertEquals(operation.getTrustee(), "GDIROJW2YHMSFZJJ4R5XWWNUVND5I45YEWS5DSFKXCHMADZ5V374U2LM");
     assertEquals(operation.getTrustor(), "GDZ55LVXECRTW4G36EZPTHI4XIYS5JUC33TUS22UOETVFVOQ77JXWY4F");
     assertEquals(operation.getLimit(), "922337203685.4775807");
-    assertEquals(operation.getAsset(), Asset.createNonNativeAsset("EUR", "GDIROJW2YHMSFZJJ4R5XWWNUVND5I45YEWS5DSFKXCHMADZ5V374U2LM"));
+    assertEquals(operation.getAsset(), create(null,"EUR", "GDIROJW2YHMSFZJJ4R5XWWNUVND5I45YEWS5DSFKXCHMADZ5V374U2LM"));
     assertFalse(operation.getTrustorMuxed().isPresent());
+  }
+
+  @Test
+  public void testDeserializeChangeTrustOperationLiquidityPoolShares() {
+    String json = "{\n" +
+            "        \"_links\": {\n" +
+            "          \"self\": {\n" +
+            "            \"href\": \"//frontier-testnet.digitalbits.io/operations/3602970755207169\"\n" +
+            "          },\n" +
+            "          \"transaction\": {\n" +
+            "            \"href\": \"//frontier-testnet.digitalbits.io/transactions/8d409a788543895843d269c3f97a2d6a2ebca6e9f8f9a7ae593457b5c0ba6644\"\n" +
+            "          },\n" +
+            "          \"effects\": {\n" +
+            "            \"href\": \"//frontier-testnet.digitalbits.io/operations/3602970755207169/effects\"\n" +
+            "          },\n" +
+            "          \"succeeds\": {\n" +
+            "            \"href\": \"//frontier-testnet.digitalbits.io/effects?order=desc\\u0026cursor=3602970755207169\"\n" +
+            "          },\n" +
+            "          \"precedes\": {\n" +
+            "            \"href\": \"//frontier-testnet.digitalbits.io/effects?order=asc\\u0026cursor=3602970755207169\"\n" +
+            "          }\n" +
+            "        },\n" +
+            "        \"id\": \"3602970755207169\",\n" +
+            "        \"paging_token\": \"3602970755207169\",\n" +
+            "        \"source_account\": \"GDZ55LVXECRTW4G36EZPTHI4XIYS5JUC33TUS22UOETVFVOQ77JXWY4F\",\n" +
+            "        \"type\": \"change_trust\",\n" +
+            "        \"type_i\": 6,\n" +
+            "        \"asset_type\": \"liquidity_pool_shares\",\n" +
+            "        \"liquidity_pool_id\": \"02449937ed825805b7a945bb6c027b53dfaf140983c1a1a64c42a81edd89b5e0\",\n" +
+            "        \"limit\": \"5.0000000\",\n" +
+            "        \"trustee\": \"GDIROJW2YHMSFZJJ4R5XWWNUVND5I45YEWS5DSFKXCHMADZ5V374U2LM\",\n" +
+            "        \"trustor\": \"GDZ55LVXECRTW4G36EZPTHI4XIYS5JUC33TUS22UOETVFVOQ77JXWY4F\"\n" +
+            "      }";
+
+    ChangeTrustOperationResponse operation = (ChangeTrustOperationResponse) GsonSingleton.getInstance().fromJson(json, OperationResponse.class);
+
+    assertEquals(operation.getTrustee(), "GDIROJW2YHMSFZJJ4R5XWWNUVND5I45YEWS5DSFKXCHMADZ5V374U2LM");
+    assertEquals(operation.getTrustor(), "GDZ55LVXECRTW4G36EZPTHI4XIYS5JUC33TUS22UOETVFVOQ77JXWY4F");
+    assertEquals(operation.getLimit(), "5.0000000");
+    assertEquals(((AssetTypePoolShare)operation.getAsset()).getPoolId(), "02449937ed825805b7a945bb6c027b53dfaf140983c1a1a64c42a81edd89b5e0");
   }
 
   @Test
@@ -376,19 +447,19 @@ public class OperationDeserializerTest extends TestCase {
     String json = "{\n" +
         "        \"_links\": {\n" +
         "          \"self\": {\n" +
-        "            \"href\": \"//frontier.testnet.digitalbits.io/operations/3602970755207169\"\n" +
+        "            \"href\": \"//frontier-testnet.digitalbits.io/operations/3602970755207169\"\n" +
         "          },\n" +
         "          \"transaction\": {\n" +
-        "            \"href\": \"//frontier.testnet.digitalbits.io/transactions/8d409a788543895843d269c3f97a2d6a2ebca6e9f8f9a7ae593457b5c0ba6644\"\n" +
+        "            \"href\": \"//frontier-testnet.digitalbits.io/transactions/8d409a788543895843d269c3f97a2d6a2ebca6e9f8f9a7ae593457b5c0ba6644\"\n" +
         "          },\n" +
         "          \"effects\": {\n" +
-        "            \"href\": \"//frontier.testnet.digitalbits.io/operations/3602970755207169/effects\"\n" +
+        "            \"href\": \"//frontier-testnet.digitalbits.io/operations/3602970755207169/effects\"\n" +
         "          },\n" +
         "          \"succeeds\": {\n" +
-        "            \"href\": \"//frontier.testnet.digitalbits.io/effects?order=desc\\u0026cursor=3602970755207169\"\n" +
+        "            \"href\": \"//frontier-testnet.digitalbits.io/effects?order=desc\\u0026cursor=3602970755207169\"\n" +
         "          },\n" +
         "          \"precedes\": {\n" +
-        "            \"href\": \"//frontier.testnet.digitalbits.io/effects?order=asc\\u0026cursor=3602970755207169\"\n" +
+        "            \"href\": \"//frontier-testnet.digitalbits.io/effects?order=asc\\u0026cursor=3602970755207169\"\n" +
         "          }\n" +
         "        },\n" +
         "        \"id\": \"3602970755207169\",\n" +
@@ -420,19 +491,19 @@ public class OperationDeserializerTest extends TestCase {
     String json = "{\n" +
             "        \"_links\": {\n" +
             "          \"self\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/operations/1253868457431041\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/1253868457431041\"\n" +
             "          },\n" +
             "          \"transaction\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/transactions/cc392abf8a4e649f16eeba4f40c43a8d50001b14a98ccfc639783125950e99d8\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/transactions/cc392abf8a4e649f16eeba4f40c43a8d50001b14a98ccfc639783125950e99d8\"\n" +
             "          },\n" +
             "          \"effects\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/operations/1253868457431041/effects\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/1253868457431041/effects\"\n" +
             "          },\n" +
             "          \"succeeds\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=desc\\u0026cursor=1253868457431041\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=desc\\u0026cursor=1253868457431041\"\n" +
             "          },\n" +
             "          \"precedes\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=asc\\u0026cursor=1253868457431041\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=asc\\u0026cursor=1253868457431041\"\n" +
             "          }\n" +
             "        },\n" +
             "        \"id\": \"1253868457431041\",\n" +
@@ -442,7 +513,7 @@ public class OperationDeserializerTest extends TestCase {
             "        \"type_i\": 5,\n" +
             "        \"signer_key\": \"GD3ZYXVC7C3ECD5I4E5NGPBFJJSULJ6HJI2FBHGKYFV34DSIWB4YEKJZ\",\n" +
             "        \"signer_weight\": 1,\n"+
-            "        \"home_domain\": \"livenet.digitalbits.io\","+
+            "        \"home_domain\": \"digitalbits.io\","+
             "        \"inflation_dest\": \"GBYWSY4NPLLPTP22QYANGTT7PEHND64P4D4B6LFEUHGUZRVYJK2H4TBE\","+
             "        \"low_threshold\": 1,\n" +
             "        \"med_threshold\": 2,\n" +
@@ -461,7 +532,7 @@ public class OperationDeserializerTest extends TestCase {
     assertEquals(operation.getSigner().getAccountId(), "GD3ZYXVC7C3ECD5I4E5NGPBFJJSULJ6HJI2FBHGKYFV34DSIWB4YEKJZ");
     assertEquals(operation.getSignerKey(), "GD3ZYXVC7C3ECD5I4E5NGPBFJJSULJ6HJI2FBHGKYFV34DSIWB4YEKJZ");
     assertEquals(operation.getSignerWeight(), new Integer(1));
-    assertEquals(operation.getHomeDomain(), "livenet.digitalbits.io");
+    assertEquals(operation.getHomeDomain(), "digitalbits.io");
     assertEquals(operation.getInflationDestination(), "GBYWSY4NPLLPTP22QYANGTT7PEHND64P4D4B6LFEUHGUZRVYJK2H4TBE");
     assertEquals(operation.getLowThreshold(), new Integer(1));
     assertEquals(operation.getMedThreshold(), new Integer(2));
@@ -518,19 +589,19 @@ public class OperationDeserializerTest extends TestCase {
     String json = "{\n" +
         "        \"_links\": {\n" +
         "          \"self\": {\n" +
-        "            \"href\": \"http://frontier.testnet.digitalbits.io/operations/3424497684189185\"\n" +
+        "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/3424497684189185\"\n" +
         "          },\n" +
         "          \"transaction\": {\n" +
-        "            \"href\": \"http://frontier.testnet.digitalbits.io/transactions/68f4d37780e2a85f5698b73977126a595dff99aed852f14a7eb39221ce1f96d5\"\n" +
+        "            \"href\": \"http://frontier-testnet.digitalbits.io/transactions/68f4d37780e2a85f5698b73977126a595dff99aed852f14a7eb39221ce1f96d5\"\n" +
         "          },\n" +
         "          \"effects\": {\n" +
-        "            \"href\": \"http://frontier.testnet.digitalbits.io/operations/3424497684189185/effects\"\n" +
+        "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/3424497684189185/effects\"\n" +
         "          },\n" +
         "          \"succeeds\": {\n" +
-        "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=desc\\u0026cursor=3424497684189185\"\n" +
+        "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=desc\\u0026cursor=3424497684189185\"\n" +
         "          },\n" +
         "          \"precedes\": {\n" +
-        "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=asc\\u0026cursor=3424497684189185\"\n" +
+        "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=asc\\u0026cursor=3424497684189185\"\n" +
         "          }\n" +
         "        },\n" +
         "        \"id\": \"3424497684189185\",\n" +
@@ -555,19 +626,19 @@ public class OperationDeserializerTest extends TestCase {
     String json = "{\n" +
         "        \"_links\": {\n" +
         "          \"self\": {\n" +
-        "            \"href\": \"http://frontier.testnet.digitalbits.io/operations/3424497684189185\"\n" +
+        "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/3424497684189185\"\n" +
         "          },\n" +
         "          \"transaction\": {\n" +
-        "            \"href\": \"http://frontier.testnet.digitalbits.io/transactions/68f4d37780e2a85f5698b73977126a595dff99aed852f14a7eb39221ce1f96d5\"\n" +
+        "            \"href\": \"http://frontier-testnet.digitalbits.io/transactions/68f4d37780e2a85f5698b73977126a595dff99aed852f14a7eb39221ce1f96d5\"\n" +
         "          },\n" +
         "          \"effects\": {\n" +
-        "            \"href\": \"http://frontier.testnet.digitalbits.io/operations/3424497684189185/effects\"\n" +
+        "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/3424497684189185/effects\"\n" +
         "          },\n" +
         "          \"succeeds\": {\n" +
-        "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=desc\\u0026cursor=3424497684189185\"\n" +
+        "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=desc\\u0026cursor=3424497684189185\"\n" +
         "          },\n" +
         "          \"precedes\": {\n" +
-        "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=asc\\u0026cursor=3424497684189185\"\n" +
+        "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=asc\\u0026cursor=3424497684189185\"\n" +
         "          }\n" +
         "        },\n" +
         "        \"id\": \"3424497684189185\",\n" +
@@ -591,11 +662,11 @@ public class OperationDeserializerTest extends TestCase {
     assertEquals(operation.getAccountMuxed().get(), new MuxedAccount(
         "MBB4JST32UWKOLGYYSCEYBHBCOFL2TGBHDVOMZP462ET4ZRD4ULA6AAAAAAAAAAAPN7BA",
         "GBB4JST32UWKOLGYYSCEYBHBCOFL2TGBHDVOMZP462ET4ZRD4ULA7S2L",
-        123l
+        valueOf(123l)
     ));
     assertEquals(operation.getIntoMuxed().get().getUnmuxedAddress(), "GAVH5JM5OKXGMQDS7YPRJ4MQCPXJUGH26LYQPQJ4SOMOJ4SXY472ZM7G");
     assertEquals(operation.getIntoMuxed().get().toString(), "MAVH5JM5OKXGMQDS7YPRJ4MQCPXJUGH26LYQPQJ4SOMOJ4SXY472YAAAAAAAAAABUSON4");
-    assertEquals(operation.getIntoMuxed().get().getId().longValue(), 420l);
+    assertEquals(operation.getIntoMuxed().get().getId(), valueOf(420l));
   }
 
   @Test
@@ -603,19 +674,19 @@ public class OperationDeserializerTest extends TestCase {
     String json = "{\n" +
             "        \"_links\": {\n" +
             "          \"self\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/operations/3320426331639809\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/3320426331639809\"\n" +
             "          },\n" +
             "          \"transaction\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/transactions/1f8fc03b26110e917d124381645d7dcf85927f17e46d8390d254a0bd99cfb0ad\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/transactions/1f8fc03b26110e917d124381645d7dcf85927f17e46d8390d254a0bd99cfb0ad\"\n" +
             "          },\n" +
             "          \"effects\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/operations/3320426331639809/effects\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/operations/3320426331639809/effects\"\n" +
             "          },\n" +
             "          \"succeeds\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=desc\\u0026cursor=3320426331639809\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=desc\\u0026cursor=3320426331639809\"\n" +
             "          },\n" +
             "          \"precedes\": {\n" +
-            "            \"href\": \"http://frontier.testnet.digitalbits.io/effects?order=asc\\u0026cursor=3320426331639809\"\n" +
+            "            \"href\": \"http://frontier-testnet.digitalbits.io/effects?order=asc\\u0026cursor=3320426331639809\"\n" +
             "          }\n" +
             "        },\n" +
             "        \"id\": \"3320426331639809\",\n" +
@@ -635,7 +706,7 @@ public class OperationDeserializerTest extends TestCase {
 
     assertEquals(operation.getOfferId(), Long.valueOf(0));
     assertEquals(operation.getAmount(), "100.0");
-    assertEquals(operation.getBuyingAsset(), Asset.createNonNativeAsset("CNY", "GAZWSWPDQTBHFIPBY4FEDFW2J6E2LE7SZHJWGDZO6Q63W7DBSRICO2KN"));
+    assertEquals(operation.getBuyingAsset(), create(null,"CNY", "GAZWSWPDQTBHFIPBY4FEDFW2J6E2LE7SZHJWGDZO6Q63W7DBSRICO2KN"));
     assertEquals(operation.getSellingAsset(), new AssetTypeNative());
   }
 
@@ -688,10 +759,10 @@ public class OperationDeserializerTest extends TestCase {
     assertEquals(operation.getAsset(), new AssetTypeNative());
     assertEquals(operation.getPath(), ImmutableList.<Asset>of(
             new AssetTypeNative(),
-            Asset.createNonNativeAsset("CNY", "GAREELUB43IRHWEASCFBLKHURCGMHE5IF6XSE7EXDLACYHGRHM43RFOX"),
-            Asset.createNonNativeAsset("CNYMNL", "GAREELUB43IRHWEASCFBLKHURCGMHE5IF6XSE7EXDLACYHGRHM43RFOX")
+            create(null,"CNY", "GAREELUB43IRHWEASCFBLKHURCGMHE5IF6XSE7EXDLACYHGRHM43RFOX"),
+            create(null,"CNYMNL", "GAREELUB43IRHWEASCFBLKHURCGMHE5IF6XSE7EXDLACYHGRHM43RFOX")
     ));
-    assertEquals(operation.getSourceAsset(), Asset.createNonNativeAsset("XRP", "GBVOL67TMUQBGL4TZYNMY3ZQ5WGQYFPFD5VJRWXR72VA33VFNL225PL5"));
+    assertEquals(operation.getSourceAsset(), create(null,"XRP", "GBVOL67TMUQBGL4TZYNMY3ZQ5WGQYFPFD5VJRWXR72VA33VFNL225PL5"));
   }
 
   @Test
@@ -746,10 +817,10 @@ public class OperationDeserializerTest extends TestCase {
     assertEquals(operation.getAsset(), new AssetTypeNative());
     assertEquals(operation.getPath(), ImmutableList.<Asset>of(
             new AssetTypeNative(),
-            Asset.createNonNativeAsset("CNY", "GAREELUB43IRHWEASCFBLKHURCGMHE5IF6XSE7EXDLACYHGRHM43RFOX"),
-            Asset.createNonNativeAsset("CNYMNL", "GAREELUB43IRHWEASCFBLKHURCGMHE5IF6XSE7EXDLACYHGRHM43RFOX")
+            create(null,"CNY", "GAREELUB43IRHWEASCFBLKHURCGMHE5IF6XSE7EXDLACYHGRHM43RFOX"),
+            create(null,"CNYMNL", "GAREELUB43IRHWEASCFBLKHURCGMHE5IF6XSE7EXDLACYHGRHM43RFOX")
     ));
-    assertEquals(operation.getSourceAsset(), Asset.createNonNativeAsset("XRP", "GBVOL67TMUQBGL4TZYNMY3ZQ5WGQYFPFD5VJRWXR72VA33VFNL225PL5"));
+    assertEquals(operation.getSourceAsset(), create(null,"XRP", "GBVOL67TMUQBGL4TZYNMY3ZQ5WGQYFPFD5VJRWXR72VA33VFNL225PL5"));
   }
 
   @Test
@@ -801,13 +872,13 @@ public class OperationDeserializerTest extends TestCase {
     assertEquals(operation.getFromMuxed().get(), new MuxedAccount(
         "MBB4JST32UWKOLGYYSCEYBHBCOFL2TGBHDVOMZP462ET4ZRD4ULA6AAAAAAAAAAAPN7BA",
         "GBB4JST32UWKOLGYYSCEYBHBCOFL2TGBHDVOMZP462ET4ZRD4ULA7S2L",
-        123l
+        valueOf(123l)
     ));
 
     assertEquals(operation.getTo(), "GAVH5JM5OKXGMQDS7YPRJ4MQCPXJUGH26LYQPQJ4SOMOJ4SXY472ZM7G");
     assertEquals(operation.getToMuxed().get().getUnmuxedAddress(), "GAVH5JM5OKXGMQDS7YPRJ4MQCPXJUGH26LYQPQJ4SOMOJ4SXY472ZM7G");
     assertEquals(operation.getToMuxed().get().toString(), "MAVH5JM5OKXGMQDS7YPRJ4MQCPXJUGH26LYQPQJ4SOMOJ4SXY472YAAAAAAAAAABUSON4");
-    assertEquals(operation.getToMuxed().get().getId().longValue(), 420l);
+    assertEquals(operation.getToMuxed().get().getId(), valueOf(420l));
   }
 
   @Test
@@ -856,7 +927,7 @@ public class OperationDeserializerTest extends TestCase {
     assertEquals(operation.getSourceMax(), "1.1779523");
     assertEquals(operation.getSourceAsset(), new AssetTypeNative());
     assertEquals(operation.getPath(), ImmutableList.<Asset>of());
-    assertEquals(operation.getAsset(), Asset.createNonNativeAsset("XRP", "GBVOL67TMUQBGL4TZYNMY3ZQ5WGQYFPFD5VJRWXR72VA33VFNL225PL5"));
+    assertEquals(operation.getAsset(), create(null,"XRP", "GBVOL67TMUQBGL4TZYNMY3ZQ5WGQYFPFD5VJRWXR72VA33VFNL225PL5"));
   }
 
   @Test
@@ -888,7 +959,7 @@ public class OperationDeserializerTest extends TestCase {
 
     InflationOperationResponse operation = (InflationOperationResponse) GsonSingleton.getInstance().fromJson(json, OperationResponse.class);
 
-    assertEquals(operation.getId(), new Long(12884914177L));
+    assertEquals(operation.getId().longValue(), 12884914177L);
   }
 
   @Test
@@ -922,7 +993,7 @@ public class OperationDeserializerTest extends TestCase {
 
     ManageDataOperationResponse operation = (ManageDataOperationResponse) GsonSingleton.getInstance().fromJson(json, OperationResponse.class);
 
-    assertEquals(operation.getId(), new Long(14336188517191688L));
+    assertEquals(operation.getId().longValue(), 14336188517191688L);
     assertEquals(operation.getName(), "CollateralValue");
     assertEquals(operation.getValue(), "MjAwMA==");
   }
@@ -991,8 +1062,8 @@ public class OperationDeserializerTest extends TestCase {
 
     BumpSequenceOperationResponse operation = (BumpSequenceOperationResponse) GsonSingleton.getInstance().fromJson(json, OperationResponse.class);
 
-    assertEquals(operation.getId(), new Long(12884914177L));
-    assertEquals(operation.getBumpTo(), new Long(79473726952833048L));
+    assertEquals(operation.getId().longValue(), 12884914177L);
+    assertEquals(operation.getBumpTo().longValue(), 79473726952833048L);
   }
 
   @Test
@@ -1025,7 +1096,7 @@ public class OperationDeserializerTest extends TestCase {
 
     EndSponsoringFutureReservesOperationResponse operation = (EndSponsoringFutureReservesOperationResponse) GsonSingleton.getInstance().fromJson(json, OperationResponse.class);
 
-    assertEquals(operation.getId(), new Long(12884914177L));
+    assertEquals(operation.getId().longValue(), 12884914177L);
     assertEquals(operation.getBeginSponsor(), "GDRW375MAYR46ODGF2WGANQC2RRZL7O246DYHHCGWTV2RE7IHE2QUQLD");
     assertFalse(operation.getBeginSponsorMuxed().isPresent());
     assertEquals(operation.getType(), "end_sponsoring_future_reserves");
@@ -1063,7 +1134,7 @@ public class OperationDeserializerTest extends TestCase {
 
     EndSponsoringFutureReservesOperationResponse operation = (EndSponsoringFutureReservesOperationResponse) GsonSingleton.getInstance().fromJson(json, OperationResponse.class);
 
-    assertEquals(operation.getId(), new Long(12884914177L));
+    assertEquals(operation.getId().longValue(), 12884914177L);
     assertEquals(operation.getBeginSponsor(), "GAVH5JM5OKXGMQDS7YPRJ4MQCPXJUGH26LYQPQJ4SOMOJ4SXY472ZM7G");
     assertEquals(operation.getBeginSponsorMuxed().get().toString(), "MAVH5JM5OKXGMQDS7YPRJ4MQCPXJUGH26LYQPQJ4SOMOJ4SXY472YAAAAAAAAAABUSON4");
     assertEquals(operation.getBeginSponsorMuxed().get().getId().longValue(), 420l);
@@ -1101,7 +1172,7 @@ public class OperationDeserializerTest extends TestCase {
 
     ClaimClaimableBalanceOperationResponse operation = (ClaimClaimableBalanceOperationResponse) GsonSingleton.getInstance().fromJson(json, OperationResponse.class);
 
-    assertEquals(operation.getId(), new Long(12884914177L));
+    assertEquals(operation.getId().longValue(), 12884914177L);
     assertEquals(operation.getBalanceId(), "00000000178826fbfe339e1f5c53417c6fedfe2c05e8bec14303143ec46b38981b09c3f9");
     assertEquals(operation.getClaimant(), "GDRW375MAYR46ODGF2WGANQC2RRZL7O246DYHHCGWTV2RE7IHE2QUQLD");
     assertFalse(operation.getClaimantMuxed().isPresent());
@@ -1141,13 +1212,13 @@ public class OperationDeserializerTest extends TestCase {
 
     ClaimClaimableBalanceOperationResponse operation = (ClaimClaimableBalanceOperationResponse) GsonSingleton.getInstance().fromJson(json, OperationResponse.class);
 
-    assertEquals(operation.getId(), new Long(12884914177L));
+    assertEquals(operation.getId().longValue(), 12884914177L);
     assertEquals(operation.getBalanceId(), "00000000178826fbfe339e1f5c53417c6fedfe2c05e8bec14303143ec46b38981b09c3f9");
     assertEquals(operation.getClaimant(), "GBB4JST32UWKOLGYYSCEYBHBCOFL2TGBHDVOMZP462ET4ZRD4ULA7S2L");
     assertEquals(operation.getClaimantMuxed().get(), new MuxedAccount(
         "MBB4JST32UWKOLGYYSCEYBHBCOFL2TGBHDVOMZP462ET4ZRD4ULA6AAAAAAAAAAAPN7BA",
         "GBB4JST32UWKOLGYYSCEYBHBCOFL2TGBHDVOMZP462ET4ZRD4ULA7S2L",
-        123l
+        valueOf(123l)
     ));
     assertEquals(operation.getType(), "claim_claimable_balance");
   }
@@ -1183,7 +1254,7 @@ public class OperationDeserializerTest extends TestCase {
 
     ClawbackClaimableBalanceOperationResponse operation = (ClawbackClaimableBalanceOperationResponse) GsonSingleton.getInstance().fromJson(json, OperationResponse.class);
 
-    assertEquals(operation.getId(), new Long(12884914177L));
+    assertEquals(operation.getId().longValue(), 12884914177L);
     assertEquals(operation.getBalanceId(), "00000000178826fbfe339e1f5c53417c6fedfe2c05e8bec14303143ec46b38981b09c3f9");
     assertEquals(operation.getType(), "clawback_claimable_balance");
   }
@@ -1221,10 +1292,10 @@ public class OperationDeserializerTest extends TestCase {
 
     ClawbackOperationResponse operation = (ClawbackOperationResponse) GsonSingleton.getInstance().fromJson(json, OperationResponse.class);
 
-    assertEquals(operation.getId(), new Long(12884914177L));
+    assertEquals(operation.getId().longValue(), 12884914177L);
     assertEquals(operation.getFrom(), "GDPFGP4IPE5DXG6XRXC4ZBUI43PAGRQ5VVNJ3LJTBXDBZ4ITO6HBHNSF");
     assertEquals(operation.getType(), "clawback");
-    assertEquals(operation.getAsset(), Asset.createNonNativeAsset("EUR", "GCWVFBJ24754I5GXG4JOEB72GJCL3MKWC7VAEYWKGQHPVH3ENPNBSKWS"));
+    assertEquals(operation.getAsset(), create(null,"EUR", "GCWVFBJ24754I5GXG4JOEB72GJCL3MKWC7VAEYWKGQHPVH3ENPNBSKWS"));
     assertEquals(operation.getAssetIssuer(), "GCWVFBJ24754I5GXG4JOEB72GJCL3MKWC7VAEYWKGQHPVH3ENPNBSKWS");
     assertEquals(operation.getAssetCode(), "EUR");
     assertEquals(operation.getAssetType(), "credit_alphanum4");
@@ -1270,7 +1341,7 @@ public class OperationDeserializerTest extends TestCase {
     assertEquals(operation.getFromMuxed().get(), new MuxedAccount(
         "MBB4JST32UWKOLGYYSCEYBHBCOFL2TGBHDVOMZP462ET4ZRD4ULA6AAAAAAAAAAAPN7BA",
         "GBB4JST32UWKOLGYYSCEYBHBCOFL2TGBHDVOMZP462ET4ZRD4ULA7S2L",
-        123l
+        valueOf(123l)
     ));
   }
 
@@ -1319,10 +1390,10 @@ public class OperationDeserializerTest extends TestCase {
 
     SetTrustLineFlagsOperationResponse operation = (SetTrustLineFlagsOperationResponse) GsonSingleton.getInstance().fromJson(json, OperationResponse.class);
 
-    assertEquals(operation.getId(), new Long(12884914177L));
+    assertEquals(operation.getId().longValue(), 12884914177L);
     assertEquals(operation.getTrustor(), "GDPFGP4IPE5DXG6XRXC4ZBUI43PAGRQ5VVNJ3LJTBXDBZ4ITO6HBHNSF");
     assertEquals(operation.getType(), "set_trust_line_flags");
-    assertEquals(operation.getAsset(), Asset.createNonNativeAsset("EUR", "GCWVFBJ24754I5GXG4JOEB72GJCL3MKWC7VAEYWKGQHPVH3ENPNBSKWS"));
+    assertEquals(operation.getAsset(), create(null,"EUR", "GCWVFBJ24754I5GXG4JOEB72GJCL3MKWC7VAEYWKGQHPVH3ENPNBSKWS"));
     assertEquals(operation.getAssetIssuer(), "GCWVFBJ24754I5GXG4JOEB72GJCL3MKWC7VAEYWKGQHPVH3ENPNBSKWS");
     assertEquals(operation.getAssetCode(), "EUR");
     assertEquals(operation.getAssetType(), "credit_alphanum4");
@@ -1330,5 +1401,201 @@ public class OperationDeserializerTest extends TestCase {
     assertEquals(operation.getClearFlags(), Lists.newArrayList(2));
     assertEquals(operation.getSetFlagStrings(), Lists.newArrayList("clawback_enabled"));
     assertEquals(operation.getClearFlagStrings(), Lists.newArrayList("authorized_to_maintain_liabilites"));
+  }
+
+  @Test
+  public void testDeserializeLiquidityPoolDepositOperation() {
+    String json = "{\n" +
+        "        \"_links\": {\n" +
+        "          \"self\": {\n" +
+        "            \"href\": \"https://frontier.testnet.digitalbits.io/operations/2278153733029889\"\n" +
+        "          },\n" +
+        "          \"transaction\": {\n" +
+        "            \"href\": \"https://frontier.testnet.digitalbits.io/transactions/0a3037071e226d981ad4114d268ad88693ee432a7b267b6007bae48f63e5e84d\"\n" +
+        "          },\n" +
+        "          \"effects\": {\n" +
+        "            \"href\": \"https://frontier.testnet.digitalbits.io/operations/2278153733029889/effects\"\n" +
+        "          },\n" +
+        "          \"succeeds\": {\n" +
+        "            \"href\": \"https://frontier.testnet.digitalbits.io/effects?order=desc\\u0026cursor=2278153733029889\"\n" +
+        "          },\n" +
+        "          \"precedes\": {\n" +
+        "            \"href\": \"https://frontier.testnet.digitalbits.io/effects?order=asc\\u0026cursor=2278153733029889\"\n" +
+        "          }\n" +
+        "        },\n" +
+        "        \"id\": \"2278153733029889\",\n" +
+        "        \"paging_token\": \"2278153733029889\",\n" +
+        "        \"transaction_successful\": true,\n" +
+        "        \"source_account\": \"GC5NCMHE56RCV44WULN6BU3THEJWWXH6PYNLCM5LGWGEGIVLTP3355V3\",\n" +
+        "        \"type\": \"liquidity_pool_deposit\",\n" +
+        "        \"type_i\": 22,\n" +
+        "        \"created_at\": \"2021-10-17T15:45:20Z\",\n" +
+        "        \"transaction_hash\": \"0a3037071e226d981ad4114d268ad88693ee432a7b267b6007bae48f63e5e84d\",\n" +
+        "        \"liquidity_pool_id\": \"1df1380108ca32e96650074db1f3e1e10541ab8768c9eba7ec3b6f9315f9faee\",\n" +
+        "        \"reserves_max\": [\n" +
+        "          {\n" +
+        "            \"asset\": \"ARST:GB7TAYRUZGE6TVT7NHP5SMIZRNQA6PLM423EYISAOAP3MKYIQMVYP2JO\",\n" +
+        "            \"amount\": \"10000.0000000\"\n" +
+        "          },\n" +
+        "          {\n" +
+        "            \"asset\": \"USDC:GC5W3BH2MQRQK2H4A6LP3SXDSAAY2W2W64OWKKVNQIAOVWSAHFDEUSDC\",\n" +
+        "            \"amount\": \"187.0000000\"\n" +
+        "          }\n" +
+        "        ],\n" +
+        "        \"min_price\": \"53.4759358\",\n" +
+        "        \"min_price_r\": {\n" +
+        "          \"n\": 10000,\n" +
+        "          \"d\": 187\n" +
+        "        },\n" +
+        "        \"max_price\": \"53.4759358\",\n" +
+        "        \"max_price_r\": {\n" +
+        "          \"n\": 10000,\n" +
+        "          \"d\": 187\n" +
+        "        },\n" +
+        "        \"reserves_deposited\": [\n" +
+        "          {\n" +
+        "            \"asset\": \"ARST:GB7TAYRUZGE6TVT7NHP5SMIZRNQA6PLM423EYISAOAP3MKYIQMVYP2JO\",\n" +
+        "            \"amount\": \"10000.0000000\"\n" +
+        "          },\n" +
+        "          {\n" +
+        "            \"asset\": \"USDC:GC5W3BH2MQRQK2H4A6LP3SXDSAAY2W2W64OWKKVNQIAOVWSAHFDEUSDC\",\n" +
+        "            \"amount\": \"187.0000000\"\n" +
+        "          }\n" +
+        "        ],\n" +
+        "        \"shares_received\": \"1367.4794331\"\n" +
+        "      }";
+
+    LiquidityPoolDepositOperationResponse operation = (LiquidityPoolDepositOperationResponse) GsonSingleton.getInstance().fromJson(json, OperationResponse.class);
+
+    assertEquals(operation.getId().longValue(), 2278153733029889L);
+    assertEquals(operation.getType(), "liquidity_pool_deposit");
+    assertEquals(operation.getSharesReceived(), "1367.4794331");
+    assertEquals(operation.getLiquidityPoolId().toString(), "1df1380108ca32e96650074db1f3e1e10541ab8768c9eba7ec3b6f9315f9faee");
+    assertEquals(operation.getMaxPrice(), "53.4759358");
+    assertEquals(operation.getMaxPriceR(), new Price(10000, 187));
+    assertEquals(operation.getMinPrice(), "53.4759358");
+    assertEquals(operation.getMinPriceR(), new Price(10000, 187));
+    assertTrue(Arrays.equals(operation.getReservesDeposited(), new AssetAmount[]{
+        new AssetAmount(create("ARST:GB7TAYRUZGE6TVT7NHP5SMIZRNQA6PLM423EYISAOAP3MKYIQMVYP2JO"), "10000.0000000"),
+        new AssetAmount(create("USDC:GC5W3BH2MQRQK2H4A6LP3SXDSAAY2W2W64OWKKVNQIAOVWSAHFDEUSDC"), "187.0000000")
+    }));
+    assertTrue(Arrays.equals(operation.getReservesMax(), new AssetAmount[]{
+        new AssetAmount(create("ARST:GB7TAYRUZGE6TVT7NHP5SMIZRNQA6PLM423EYISAOAP3MKYIQMVYP2JO"), "10000.0000000"),
+        new AssetAmount(create("USDC:GC5W3BH2MQRQK2H4A6LP3SXDSAAY2W2W64OWKKVNQIAOVWSAHFDEUSDC"), "187.0000000")
+    }));
+  }
+
+  @Test
+  public void testDeserializeLiquidityPoolWithdrawOperation() {
+    String json = "      {\n" +
+        "        \"_links\": {\n" +
+        "          \"self\": {\n" +
+        "            \"href\": \"https://frontier.testnet.digitalbits.io/operations/2313539968573441\"\n" +
+        "          },\n" +
+        "          \"transaction\": {\n" +
+        "            \"href\": \"https://frontier.testnet.digitalbits.io/transactions/691487d46d6e8bf37bf54afae9a99cd23e1e609fd1b0071cdd5011e68099306a\"\n" +
+        "          },\n" +
+        "          \"effects\": {\n" +
+        "            \"href\": \"https://frontier.testnet.digitalbits.io/operations/2313539968573441/effects\"\n" +
+        "          },\n" +
+        "          \"succeeds\": {\n" +
+        "            \"href\": \"https://frontier.testnet.digitalbits.io/effects?order=desc\\u0026cursor=2313539968573441\"\n" +
+        "          },\n" +
+        "          \"precedes\": {\n" +
+        "            \"href\": \"https://frontier.testnet.digitalbits.io/effects?order=asc\\u0026cursor=2313539968573441\"\n" +
+        "          }\n" +
+        "        },\n" +
+        "        \"id\": \"2313539968573441\",\n" +
+        "        \"paging_token\": \"2313539968573441\",\n" +
+        "        \"transaction_successful\": true,\n" +
+        "        \"source_account\": \"GC5NCMHE56RCV44WULN6BU3THEJWWXH6PYNLCM5LGWGEGIVLTP3355V3\",\n" +
+        "        \"type\": \"liquidity_pool_withdraw\",\n" +
+        "        \"type_i\": 23,\n" +
+        "        \"created_at\": \"2021-10-18T03:47:46Z\",\n" +
+        "        \"transaction_hash\": \"691487d46d6e8bf37bf54afae9a99cd23e1e609fd1b0071cdd5011e68099306a\",\n" +
+        "        \"liquidity_pool_id\": \"1df1380108ca32e96650074db1f3e1e10541ab8768c9eba7ec3b6f9315f9faee\",\n" +
+        "        \"reserves_min\": [\n" +
+        "          {\n" +
+        "            \"asset\": \"ARST:GB7TAYRUZGE6TVT7NHP5SMIZRNQA6PLM423EYISAOAP3MKYIQMVYP2JO\",\n" +
+        "            \"amount\": \"10000.0000000\"\n" +
+        "          },\n" +
+        "          {\n" +
+        "            \"asset\": \"USDC:GC5W3BH2MQRQK2H4A6LP3SXDSAAY2W2W64OWKKVNQIAOVWSAHFDEUSDC\",\n" +
+        "            \"amount\": \"187.0000000\"\n" +
+        "          }\n" +
+        "        ],\n" +
+        "        \"shares\": \"1367.4794331\",\n" +
+        "        \"reserves_received\": [\n" +
+        "          {\n" +
+        "            \"asset\": \"ARST:GB7TAYRUZGE6TVT7NHP5SMIZRNQA6PLM423EYISAOAP3MKYIQMVYP2JO\",\n" +
+        "            \"amount\": \"10000.0000000\"\n" +
+        "          },\n" +
+        "          {\n" +
+        "            \"asset\": \"USDC:GC5W3BH2MQRQK2H4A6LP3SXDSAAY2W2W64OWKKVNQIAOVWSAHFDEUSDC\",\n" +
+        "            \"amount\": \"187.0000000\"\n" +
+        "          }\n" +
+        "        ]\n" +
+        "      }";
+
+    LiquidityPoolWithdrawOperationResponse operation = (LiquidityPoolWithdrawOperationResponse) GsonSingleton.getInstance().fromJson(json, OperationResponse.class);
+
+    assertEquals(operation.getId().longValue(), 2313539968573441L);
+    assertEquals(operation.getType(), "liquidity_pool_withdraw");
+    assertEquals(operation.getShares(), "1367.4794331");
+    assertEquals(operation.getLiquidityPoolId().toString(), "1df1380108ca32e96650074db1f3e1e10541ab8768c9eba7ec3b6f9315f9faee");
+    assertTrue(Arrays.equals(operation.getReservesMin(), new AssetAmount[]{
+        new AssetAmount(create("ARST:GB7TAYRUZGE6TVT7NHP5SMIZRNQA6PLM423EYISAOAP3MKYIQMVYP2JO"), "10000.0000000"),
+        new AssetAmount(create("USDC:GC5W3BH2MQRQK2H4A6LP3SXDSAAY2W2W64OWKKVNQIAOVWSAHFDEUSDC"), "187.0000000")
+        }
+    ));
+    assertTrue(Arrays.equals(operation.getReservesReceived(), new AssetAmount[]{
+        new AssetAmount(create("ARST:GB7TAYRUZGE6TVT7NHP5SMIZRNQA6PLM423EYISAOAP3MKYIQMVYP2JO"), "10000.0000000"),
+        new AssetAmount(create("USDC:GC5W3BH2MQRQK2H4A6LP3SXDSAAY2W2W64OWKKVNQIAOVWSAHFDEUSDC"), "187.0000000")
+        }
+    ));
+  }
+
+  @Test
+  public void testDeserializeCreateClaimableBalanceOperation() {
+    String json = "{\n" +
+            "  \n" +
+            "  \"id\": \"158104892991700993\",\n" +
+            "  \"paging_token\": \"158104892991700993\",\n" +
+            "  \"transaction_successful\": true,\n" +
+            "  \"source_account\": \"GAKFBRS24U3PEN6XDMEX4JEV5NGBARS2ZFF5O4CF3JL464SQSD4MDCPF\",\n" +
+            "  \"type\": \"create_claimable_balance\",\n" +
+            "  \"type_i\": 14,\n" +
+            "  \"created_at\": \"2021-08-11T16:16:32Z\",\n" +
+            "  \"transaction_hash\": \"c78e86007a0ee0bb0c717b02f5e306e524b4913b892e9983e7db4664a0c29841\",\n" +
+            "  \"sponsor\": \"GAKFBRS24U3PEN6XDMEX4JEV5NGBARS2ZFF5O4CF3JL464SQSD4MDCPF\",\n" +
+            "  \"asset\": \"KES:GA2MSSZKJOU6RNL3EJKH3S5TB5CDYTFQFWRYFGUJVIN5I6AOIRTLUHTO\",\n" +
+            "  \"amount\": \"0.0012200\",\n" +
+            "  \"claimants\": [\n" +
+            "    {\n" +
+            "      \"destination\": \"GBQECQVAS2FJ7DLCUXDASZAJQLWPXNTCR2DGBPKQDO3QS66TJXLRHFIK\",\n" +
+            "      \"predicate\": {\n" +
+            "        \"abs_before\": \"+39121901036-03-29T15:30:22Z\",\n" +
+            "        \"abs_before_epoch\": \"1234567890982222222\"\n" +
+            "      }\n" +
+            "    },\n" +
+            "    {\n" +
+            "      \"destination\": \"GAKFBRS24U3PEN6XDMEX4JEV5NGBARS2ZFF5O4CF3JL464SQSD4MDCPF\",\n" +
+            "      \"predicate\": {\n" +
+            "        \"unconditional\": true\n" +
+            "      }\n" +
+            "    }\n" +
+            "  ]\n" +
+            "}";
+
+    CreateClaimableBalanceOperationResponse operation = (CreateClaimableBalanceOperationResponse) GsonSingleton.getInstance().fromJson(json, OperationResponse.class);
+
+    assertEquals(operation.getId().longValue(), 158104892991700993L);
+    assertEquals(operation.getClaimants().size(), 2);
+    assertEquals(operation.getClaimants().get(0).getDestination(), "GBQECQVAS2FJ7DLCUXDASZAJQLWPXNTCR2DGBPKQDO3QS66TJXLRHFIK");
+    assertSame(operation.getClaimants().get(0).getPredicate().getClass(), Predicate.AbsBefore.class);
+    assertEquals(((Predicate.AbsBefore)operation.getClaimants().get(0).getPredicate()).getTimestampSeconds(), 1234567890982222222L);
+    assertEquals(operation.getClaimants().get(1).getDestination(), "GAKFBRS24U3PEN6XDMEX4JEV5NGBARS2ZFF5O4CF3JL464SQSD4MDCPF");
+    assertSame(operation.getClaimants().get(1).getPredicate().getClass(), Predicate.Unconditional.class);
+    assertEquals(operation.getType(), "create_claimable_balance");
   }
 }

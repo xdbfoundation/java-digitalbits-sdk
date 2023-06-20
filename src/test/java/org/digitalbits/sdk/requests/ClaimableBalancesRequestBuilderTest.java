@@ -79,7 +79,7 @@ public class ClaimableBalancesRequestBuilderTest {
   String json = "{\n" +
       "  \"_links\": {\n" +
       "    \"self\": {\n" +
-      "      \"href\": \"https://frontier.livenet.digitalbits.io/claimable_balances/00000000ae76f49e8513d0922b6bcbc8a3f5c4c0a5161871f27924e08724646acab56cd2\"\n" +
+      "      \"href\": \"https://frontier-protocol14.digitalbits.io/claimable_balances/00000000ae76f49e8513d0922b6bcbc8a3f5c4c0a5161871f27924e08724646acab56cd2\"\n" +
       "    }\n" +
       "  },\n" +
       "  \"id\": \"00000000ae76f49e8513d0922b6bcbc8a3f5c4c0a5161871f27924e08724646acab56cd2\",\n" +

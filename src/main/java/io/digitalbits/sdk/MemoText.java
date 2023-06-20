@@ -1,9 +1,10 @@
 package io.digitalbits.sdk;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkArgument;
+
 import io.digitalbits.sdk.xdr.MemoType;
 import io.digitalbits.sdk.xdr.XdrString;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Represents MEMO_TEXT.
@@ -20,11 +21,9 @@ public class MemoText extends Memo {
   }
 
   public MemoText(XdrString text) {
-    this.text = checkNotNull(text, "text cannot be null");
-    int length = this.text.getBytes().length;
-    if (length > 28) {
-      throw new MemoTooLongException("text must be <= 28 bytes. length=" + String.valueOf(length));
-    }
+    checkNotNull(text, "text cannot be null");
+    checkArgument(text.getBytes().length <= 28, "text cannot be more than 28-bytes long.");
+    this.text = text;
   }
 
   public String getText() {

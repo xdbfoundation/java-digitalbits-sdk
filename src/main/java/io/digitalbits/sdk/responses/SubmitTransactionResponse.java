@@ -172,6 +172,7 @@ public class SubmitTransactionResponse extends Response {
 
         /**
          * Returns XDR TransactionEnvelope base64-encoded string.
+         * Use <a href="http://xdbfoundation.github.io/xdr-viewer/">xdr-viewer</a> to debug.
          */
         public String getEnvelopeXdr() {
             return envelopeXdr;
@@ -179,6 +180,7 @@ public class SubmitTransactionResponse extends Response {
 
         /**
          * Returns XDR TransactionResult base64-encoded string
+         * Use <a href="http://xdbfoundation.github.io/xdr-viewer/">xdr-viewer</a> to debug.
          */
         public String getResultXdr() {
             return resultXdr;
@@ -194,20 +196,28 @@ public class SubmitTransactionResponse extends Response {
         /**
          * Contains result codes for this transaction.
          *
+         * @see <a href="https://github.com/xdbfoundation/frontier/blob/master/src/github.com/digitalbits/frontier/codes/main.go" target="_blank">Possible values</a>
          */
         public static class ResultCodes {
             @SerializedName("transaction")
             private final String transactionResultCode;
+            @SerializedName("inner_transaction")
+            private final String innerTransactionResultCode;
             @SerializedName("operations")
             private final ArrayList<String> operationsResultCodes;
 
-            public ResultCodes(String transactionResultCode, ArrayList<String> operationsResultCodes) {
+            public ResultCodes(String transactionResultCode, String innerTransactionResultCode, ArrayList<String> operationsResultCodes) {
                 this.transactionResultCode = transactionResultCode;
+                this.innerTransactionResultCode = innerTransactionResultCode;
                 this.operationsResultCodes = operationsResultCodes;
             }
 
             public String getTransactionResultCode() {
                 return transactionResultCode;
+            }
+            
+            public String getInnerTransactionResultCode() {
+                return innerTransactionResultCode;
             }
 
             public ArrayList<String> getOperationsResultCodes() {

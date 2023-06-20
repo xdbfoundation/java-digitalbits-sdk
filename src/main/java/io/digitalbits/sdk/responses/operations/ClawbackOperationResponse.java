@@ -5,6 +5,10 @@ import com.google.gson.annotations.SerializedName;
 import io.digitalbits.sdk.Asset;
 import io.digitalbits.sdk.responses.MuxedAccount;
 
+import java.math.BigInteger;
+
+import static io.digitalbits.sdk.Asset.create;
+
 /**
  * Represents a Clawback operation response.
  *
@@ -25,7 +29,7 @@ public class ClawbackOperationResponse extends OperationResponse {
   @SerializedName("from_muxed")
   private String fromMuxed;
   @SerializedName("from_muxed_id")
-  private Long fromMuxedId;
+  private BigInteger fromMuxedId;
 
   public String getAssetType() {
     return assetType;
@@ -40,7 +44,7 @@ public class ClawbackOperationResponse extends OperationResponse {
   }
 
   public Asset getAsset() {
-    return Asset.createNonNativeAsset(assetCode, assetIssuer);
+    return create(assetType, assetCode, assetIssuer);
   }
 
   public String getAmount() {

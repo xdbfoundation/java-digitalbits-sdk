@@ -47,7 +47,7 @@ public abstract class Operation {
    * Generates Operation XDR object.
    */
   public io.digitalbits.sdk.xdr.Operation toXdr() {
-    return toXdr(AccountConverter.disableMuxed());
+    return toXdr(AccountConverter.enableMuxed());
   }
 
   /**
@@ -70,7 +70,7 @@ public abstract class Operation {
    * Returns base64-encoded Operation XDR object.
    */
   public String toXdrBase64() {
-    return toXdrBase64(AccountConverter.disableMuxed());
+    return toXdrBase64(AccountConverter.enableMuxed());
   }
 
 
@@ -176,6 +176,12 @@ public abstract class Operation {
       case SET_TRUST_LINE_FLAGS:
         operation = new SetTrustlineFlagsOperation.Builder(body.getSetTrustLineFlagsOp()).build();
         break;
+      case LIQUIDITY_POOL_DEPOSIT:
+        operation = new LiquidityPoolDepositOperation(body.getLiquidityPoolDepositOp());
+        break;
+      case LIQUIDITY_POOL_WITHDRAW:
+        operation = new LiquidityPoolWithdrawOperation(body.getLiquidityPoolWithdrawOp());
+        break;
       default:
         throw new RuntimeException("Unknown operation body " + body.getDiscriminant());
     }
@@ -193,7 +199,7 @@ public abstract class Operation {
    * @param xdr XDR object
    */
   public static Operation fromXdr(io.digitalbits.sdk.xdr.Operation xdr) {
-    return fromXdr(AccountConverter.disableMuxed(), xdr);
+    return fromXdr(AccountConverter.enableMuxed(), xdr);
   }
 
   /**

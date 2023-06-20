@@ -2,10 +2,12 @@ package io.digitalbits.sdk.responses.operations;
 
 import com.google.common.base.Optional;
 import com.google.gson.annotations.SerializedName;
-
 import io.digitalbits.sdk.Asset;
-import io.digitalbits.sdk.AssetTypeNative;
 import io.digitalbits.sdk.responses.MuxedAccount;
+
+import java.math.BigInteger;
+
+import static io.digitalbits.sdk.Asset.create;
 
 /**
  * Represents ChangeTrust operation response.
@@ -19,7 +21,7 @@ public class ChangeTrustOperationResponse extends OperationResponse {
   @SerializedName("trustor_muxed")
   private String trustorMuxed;
   @SerializedName("trustor_muxed_id")
-  private Long trustorMuxedId;
+  private BigInteger trustorMuxedId;
   @SerializedName("trustee")
   private String trustee;
   @SerializedName("asset_type")
@@ -30,6 +32,8 @@ public class ChangeTrustOperationResponse extends OperationResponse {
   private String assetIssuer;
   @SerializedName("limit")
   private String limit;
+  @SerializedName("liquidity_pool_id")
+  private String liquidityPoolId;
 
   public Optional<MuxedAccount> getTrustorMuxed() {
     if (this.trustorMuxed == null || this.trustorMuxed.isEmpty()) {
@@ -51,10 +55,7 @@ public class ChangeTrustOperationResponse extends OperationResponse {
   }
 
   public Asset getAsset() {
-    if (assetType.equals("native")) {
-      return new AssetTypeNative();
-    } else {
-      return Asset.createNonNativeAsset(assetCode, assetIssuer);
-    }
+    return create(assetType, assetCode, assetIssuer, liquidityPoolId);
   }
+
 }

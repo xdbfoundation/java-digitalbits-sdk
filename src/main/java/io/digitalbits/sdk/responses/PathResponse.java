@@ -1,11 +1,11 @@
 package io.digitalbits.sdk.responses;
 
 import com.google.gson.annotations.SerializedName;
-
 import io.digitalbits.sdk.Asset;
-import io.digitalbits.sdk.AssetTypeNative;
 
 import java.util.ArrayList;
+
+import static io.digitalbits.sdk.Asset.create;
 
 /**
  * Represents path response.
@@ -66,19 +66,11 @@ public class PathResponse extends Response {
   }
 
   public Asset getDestinationAsset() {
-    if (destinationAssetType.equals("native")) {
-      return new AssetTypeNative();
-    } else {
-      return Asset.createNonNativeAsset(destinationAssetCode, destinationAssetIssuer);
-    }
+    return create(destinationAssetType, destinationAssetCode, destinationAssetIssuer);
   }
 
   public Asset getSourceAsset() {
-    if (sourceAssetType.equals("native")) {
-      return new AssetTypeNative();
-    } else {
-      return Asset.createNonNativeAsset(sourceAssetCode, sourceAssetIssuer);
-    }
+    return create(sourceAssetType,sourceAssetCode, sourceAssetIssuer);
   }
 
   public Links getLinks() {

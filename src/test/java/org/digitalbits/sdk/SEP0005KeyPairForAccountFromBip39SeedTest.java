@@ -3,6 +3,9 @@ package io.digitalbits.sdk;
 import org.junit.Assert;
 import org.junit.Test;
 
+/**
+ * Test cases from https://github.com/xdbfoundation/digitalbits-protocol/blob/master/ecosystem/sep-0005.md
+ */
 public final class SEP0005KeyPairForAccountFromBip39SeedTest {
 
   private final String case1Bip39Seed = "e4a5a632e70943ae7f07659df1332160937fad82587216a4c64315a0fb39497ee4a01f76ddab4cba68147977f3a147b6ad584c41808e8238a07f6cc4b582f186";

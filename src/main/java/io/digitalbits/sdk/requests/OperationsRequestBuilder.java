@@ -7,6 +7,8 @@ import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+
+import io.digitalbits.sdk.LiquidityPoolID;
 import io.digitalbits.sdk.responses.Page;
 import io.digitalbits.sdk.responses.operations.OperationResponse;
 
@@ -92,6 +94,25 @@ public class OperationsRequestBuilder extends RequestBuilder {
   public OperationsRequestBuilder forTransaction(String transactionId) {
     transactionId = checkNotNull(transactionId, "transactionId cannot be null");
     this.setSegments("transactions", transactionId, "operations");
+    return this;
+  }
+
+  /**
+   * Builds request to <code>GET /liquidity_pools/{poolID}/operations</code>
+   * @see <a href="https://developers.digitalbits.io/api/resources/liquiditypools/operations/">Operations for Liquidity Pool</a>
+   * @param liquidityPoolID Liquidity pool for which to get operations
+   */
+  public OperationsRequestBuilder forLiquidityPool(LiquidityPoolID liquidityPoolID) {
+    return this.forLiquidityPool(String.valueOf(liquidityPoolID));
+  }
+
+  /**
+   * Builds request to <code>GET /liquidity_pools/{poolID}/operations</code>
+   * @see <a href="https://developers.digitalbits.io/api/resources/liquiditypools/operations/">Operations for Liquidity Pool</a>
+   * @param liquidityPoolID Liquidity pool for which to get operations
+   */
+  public OperationsRequestBuilder forLiquidityPool(String liquidityPoolID) {
+    this.setSegments("liquidity_pools", liquidityPoolID, "operations");
     return this;
   }
 

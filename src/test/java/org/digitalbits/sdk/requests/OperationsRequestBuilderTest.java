@@ -6,6 +6,7 @@ import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
 import org.junit.Test;
 import io.digitalbits.sdk.KeyPair;
+import io.digitalbits.sdk.LiquidityPoolID;
 import io.digitalbits.sdk.Network;
 import io.digitalbits.sdk.Server;
 import io.digitalbits.sdk.responses.operations.OperationResponse;
@@ -104,6 +105,15 @@ public class OperationsRequestBuilderTest {
             .order(RequestBuilder.Order.ASC)
             .buildUri();
     assertEquals("https://frontier.testnet.digitalbits.io/ledgers/200000000000/operations?limit=50&order=asc", uri.toString());
+  }
+
+  @Test
+  public void testForLiquidityPool() {
+    Server server = new Server("https://frontier.testnet.digitalbits.io");
+    HttpUrl uri = server.operations()
+            .forLiquidityPool(new LiquidityPoolID("67260c4c1807b262ff851b0a3fe141194936bb0215b2f77447f1df11998eabb9"))
+            .buildUri();
+    assertEquals("https://frontier.testnet.digitalbits.io/liquidity_pools/67260c4c1807b262ff851b0a3fe141194936bb0215b2f77447f1df11998eabb9/operations", uri.toString());
   }
 
   @Test

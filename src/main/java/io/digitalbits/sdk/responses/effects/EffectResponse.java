@@ -2,11 +2,12 @@ package io.digitalbits.sdk.responses.effects;
 
 import com.google.common.base.Optional;
 import com.google.gson.annotations.SerializedName;
-
 import io.digitalbits.sdk.responses.Link;
 import io.digitalbits.sdk.responses.MuxedAccount;
 import io.digitalbits.sdk.responses.Pageable;
 import io.digitalbits.sdk.responses.Response;
+
+import java.math.BigInteger;
 
 /**
  * Abstract class for effect responses.
@@ -22,7 +23,7 @@ public abstract class EffectResponse extends Response implements Pageable {
   @SerializedName("account_muxed")
   private String accountMuxed;
   @SerializedName("account_muxed_id")
-  private Long accountMuxedId;
+  private BigInteger accountMuxedId;
   @SerializedName("type")
   private String type;
   @SerializedName("created_at")

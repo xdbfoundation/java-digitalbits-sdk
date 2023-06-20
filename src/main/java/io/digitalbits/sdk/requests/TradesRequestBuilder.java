@@ -1,15 +1,17 @@
 package io.digitalbits.sdk.requests;
 
 import com.google.gson.reflect.TypeToken;
-import java.io.IOException;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import io.digitalbits.sdk.Asset;
 import io.digitalbits.sdk.AssetTypeCreditAlphaNum;
+import io.digitalbits.sdk.LiquidityPoolID;
 import io.digitalbits.sdk.responses.Page;
 import io.digitalbits.sdk.responses.TradeResponse;
+
+import java.io.IOException;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -17,6 +19,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Builds requests connected to trades.
  */
 public class TradesRequestBuilder extends RequestBuilder {
+    private static final String TRADE_TYPE_PARAMETER_NAME = "trade_type";
+
     public TradesRequestBuilder(OkHttpClient httpClient, HttpUrl serverURI) {
         super(httpClient, serverURI, "trades");
     }
@@ -52,6 +56,39 @@ public class TradesRequestBuilder extends RequestBuilder {
         return this;
     }
 
+  /**
+   * Builds request to <code>GET /liquidity_pools/{poolID}/trades</code>
+   * @see <a href="https://developers.digitalbits.io/api/resources/liquiditypools/trades/">Trades for Liquidity Pool</a>
+   * @param liquidityPoolID Liquidity pool for which to get trades
+   */
+  public TradesRequestBuilder forLiquidityPool(LiquidityPoolID liquidityPoolID) {
+    return this.forLiquidityPool(String.valueOf(liquidityPoolID));
+  }
+
+  /**
+   * Builds request to <code>GET /liquidity_pools/{poolID}/trades</code>
+   * @see <a href="https://developers.digitalbits.io/api/resources/liquiditypools/trades/">Trades for Liquidity Pool</a>
+   * @param liquidityPoolID Liquidity pool for which to get trades
+   */
+  public TradesRequestBuilder forLiquidityPool(String liquidityPoolID) {
+    this.setSegments("liquidity_pools", String.valueOf(liquidityPoolID), "trades");
+    return this;
+  }
+
+    /**
+     * Returns all trades that of a specific type.
+     *
+     * @param tradeType type
+     * @return current {@link TradesRequestBuilder} instance
+     * @see <a href="https://developers.digitalbits.io/api/resources/trades/list/">List All Trades</a>
+     */
+    public TradesRequestBuilder forTradeType(String tradeType) {
+        tradeType = checkNotNull(tradeType, "tradeType cannot be null");
+        uriBuilder.setQueryParameter(TRADE_TYPE_PARAMETER_NAME, tradeType);
+        return this;
+    }
+
+
     public static Page<TradeResponse> execute(OkHttpClient httpClient, HttpUrl uri)
         throws IOException, TooManyRequestsException {
         TypeToken type = new TypeToken<Page<TradeResponse>>() {};
@@ -67,8 +104,12 @@ public class TradesRequestBuilder extends RequestBuilder {
         return this.execute(this.httpClient, this.buildUri());
     }
 
-    public TradesRequestBuilder offerId(String offerId) {
-        uriBuilder.setQueryParameter("offer_id", offerId);
+    public TradesRequestBuilder offerId(Long offerId) {
+        if (offerId == null) {
+            uriBuilder.removeAllQueryParameters("offer_id");
+            return this;
+        }
+        uriBuilder.setQueryParameter("offer_id",  offerId.toString());
         return this;
     }
 

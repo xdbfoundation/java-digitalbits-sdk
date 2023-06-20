@@ -2,10 +2,13 @@ package io.digitalbits.sdk.responses.operations;
 
 import com.google.common.base.Optional;
 import com.google.gson.annotations.SerializedName;
-
 import io.digitalbits.sdk.Asset;
 import io.digitalbits.sdk.AssetTypeNative;
 import io.digitalbits.sdk.responses.MuxedAccount;
+
+import java.math.BigInteger;
+
+import static io.digitalbits.sdk.Asset.create;
 
 /**
  * @deprecated As of release 0.24.0, replaced by {@link SetTrustLineFlagsOperationResponse}
@@ -23,7 +26,7 @@ public class AllowTrustOperationResponse extends OperationResponse {
   @SerializedName("trustee_muxed")
   private String trusteeMuxed;
   @SerializedName("trustee_muxed_id")
-  private Long trusteeMuxedId;
+  private BigInteger trusteeMuxedId;
   @SerializedName("asset_type")
   private String assetType;
   @SerializedName("asset_code")
@@ -63,7 +66,7 @@ public class AllowTrustOperationResponse extends OperationResponse {
     if (assetType.equals("native")) {
       return new AssetTypeNative();
     } else {
-      return Asset.createNonNativeAsset(assetCode, assetIssuer);
+      return create(assetType, assetCode, assetIssuer);
     }
   }
 }

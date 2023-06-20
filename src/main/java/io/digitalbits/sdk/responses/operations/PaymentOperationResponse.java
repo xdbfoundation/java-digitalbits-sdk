@@ -1,9 +1,10 @@
 package io.digitalbits.sdk.responses.operations;
 
 import com.google.gson.annotations.SerializedName;
-
 import io.digitalbits.sdk.Asset;
 import io.digitalbits.sdk.AssetTypeNative;
+
+import static io.digitalbits.sdk.Asset.create;
 
 /**
  * Represents Payment operation response.
@@ -42,7 +43,7 @@ public class PaymentOperationResponse extends OperationResponse {
     if (assetType.equals("native")) {
       return new AssetTypeNative();
     } else {
-      return Asset.createNonNativeAsset(assetCode, assetIssuer);
+      return create(assetType, assetCode, assetIssuer);
     }
   }
 

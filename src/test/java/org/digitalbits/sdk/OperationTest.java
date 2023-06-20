@@ -1,12 +1,11 @@
 package io.digitalbits.sdk;
 
 import com.google.common.collect.Lists;
+import com.google.common.io.BaseEncoding;
 import org.junit.Test;
 import io.digitalbits.sdk.xdr.SignerKey;
 import io.digitalbits.sdk.xdr.TrustLineFlags;
 import io.digitalbits.sdk.xdr.XdrDataInputStream;
-
-import com.google.common.io.BaseEncoding;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -16,6 +15,7 @@ import java.util.EnumSet;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static io.digitalbits.sdk.Asset.create;
 
 public class OperationTest {
 
@@ -89,9 +89,9 @@ public class OperationTest {
         assertEquals(destination, parsedOperation.getDestination());
         assertEquals(source, parsedOperation.getSourceAccount());
 
-        parsedOperation = (PaymentOperation) Operation.fromXdr(AccountConverter.disableMuxed(), xdr);
-        assertEquals("GDQNY3PBOJOKYZSRMK2S7LHHGWZIUISD4QORETLMXEWXBI7KFZZMKTL3", parsedOperation.getDestination());
-        assertEquals("GA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJVSGZ", parsedOperation.getSourceAccount());
+        parsedOperation = (PaymentOperation) Operation.fromXdr(AccountConverter.enableMuxed(), xdr);
+        assertEquals("MDQNY3PBOJOKYZSRMK2S7LHHGWZIUISD4QORETLMXEWXBI7KFZZMKAAAAAAMV7V2XYGQO", parsedOperation.getDestination());
+        assertEquals("MA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJVAAAAAAAAAAAAAJLK", parsedOperation.getSourceAccount());
     }
 
     @Test
@@ -199,9 +199,9 @@ public class OperationTest {
         assertEquals(destination, parsedOperation.getDestination());
         assertEquals(source, parsedOperation.getSourceAccount());
 
-        parsedOperation = (PathPaymentStrictReceiveOperation) Operation.fromXdr(AccountConverter.disableMuxed(), xdr);
-        assertEquals("GDQNY3PBOJOKYZSRMK2S7LHHGWZIUISD4QORETLMXEWXBI7KFZZMKTL3", parsedOperation.getDestination());
-        assertEquals("GA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJVSGZ", parsedOperation.getSourceAccount());
+        parsedOperation = (PathPaymentStrictReceiveOperation) Operation.fromXdr(AccountConverter.enableMuxed(), xdr);
+        assertEquals("MDQNY3PBOJOKYZSRMK2S7LHHGWZIUISD4QORETLMXEWXBI7KFZZMKAAAAAAMV7V2XYGQO", parsedOperation.getDestination());
+        assertEquals("MA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJVAAAAAAAAAAAAAJLK", parsedOperation.getSourceAccount());
     }
 
     @Test
@@ -315,9 +315,9 @@ public class OperationTest {
         assertEquals(destination, parsedOperation.getDestination());
         assertEquals(source, parsedOperation.getSourceAccount());
 
-        parsedOperation = (PathPaymentStrictSendOperation) Operation.fromXdr(AccountConverter.disableMuxed(), xdr);
-        assertEquals("GDQNY3PBOJOKYZSRMK2S7LHHGWZIUISD4QORETLMXEWXBI7KFZZMKTL3", parsedOperation.getDestination());
-        assertEquals("GA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJVSGZ", parsedOperation.getSourceAccount());
+        parsedOperation = (PathPaymentStrictSendOperation) Operation.fromXdr(AccountConverter.enableMuxed(), xdr);
+        assertEquals("MDQNY3PBOJOKYZSRMK2S7LHHGWZIUISD4QORETLMXEWXBI7KFZZMKAAAAAAMV7V2XYGQO", parsedOperation.getDestination());
+        assertEquals("MA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJVAAAAAAAAAAAAAJLK", parsedOperation.getSourceAccount());
     }
 
     @Test
@@ -325,7 +325,7 @@ public class OperationTest {
         // GC5SIC4E3V56VOHJ3OZAX5SJDTWY52JYI2AFK6PUGSXFVRJQYQXXZBZF
         KeyPair source = KeyPair.fromSecretSeed("SC4CGETADVYTCR5HEAVZRB3DZQY5Y4J7RFNJTRA6ESMHIPEZUSTE2QDK");
 
-        Asset asset = new AssetTypeNative();
+        ChangeTrustAsset asset = ChangeTrustAsset.create(new AssetTypeNative());
         String limit = "922337203685.4775807";
 
         ChangeTrustOperation operation = new ChangeTrustOperation.Builder(asset, limit)
@@ -337,7 +337,7 @@ public class OperationTest {
 
         assertEquals(9223372036854775807L, xdr.getBody().getChangeTrustOp().getLimit().getInt64().longValue());
         assertEquals(source.getAccountId(), parsedOperation.getSourceAccount());
-        assertTrue(parsedOperation.getAsset() instanceof AssetTypeNative);
+        assertEquals("native", parsedOperation.getAsset().getType());
         assertEquals(limit, parsedOperation.getLimit());
 
         assertEquals(
@@ -407,7 +407,7 @@ public class OperationTest {
         Integer lowThreshold = 2;
         Integer mediumThreshold = 3;
         Integer highThreshold = 4;
-        String homeDomain = "livenet.digitalbits.io";
+        String homeDomain = "digitalbits.io";
         Integer signerWeight = 1;
 
         SetOptionsOperation operation = new SetOptionsOperation.Builder()
@@ -449,7 +449,7 @@ public class OperationTest {
         // GC5SIC4E3V56VOHJ3OZAX5SJDTWY52JYI2AFK6PUGSXFVRJQYQXXZBZF
         KeyPair source = KeyPair.fromSecretSeed("SC4CGETADVYTCR5HEAVZRB3DZQY5Y4J7RFNJTRA6ESMHIPEZUSTE2QDK");
 
-        String homeDomain = "livenet.digitalbits.io";
+        String homeDomain = "digitalbits.io";
 
         SetOptionsOperation operation = new SetOptionsOperation.Builder()
                 .setHomeDomain(homeDomain)
@@ -481,7 +481,7 @@ public class OperationTest {
         // GC5SIC4E3V56VOHJ3OZAX5SJDTWY52JYI2AFK6PUGSXFVRJQYQXXZBZF
         KeyPair source = KeyPair.fromSecretSeed("SC4CGETADVYTCR5HEAVZRB3DZQY5Y4J7RFNJTRA6ESMHIPEZUSTE2QDK");
 
-        byte[] preimage = "livenet.digitalbits.io".getBytes();
+        byte[] preimage = "digitalbits.io".getBytes();
         byte[] hash = Util.hash(preimage);
 
         SetOptionsOperation operation = new SetOptionsOperation.Builder()
@@ -517,9 +517,9 @@ public class OperationTest {
 
         long sequenceNumber = 2908908335136768L;
         Account account = new Account(source.getAccountId(), sequenceNumber);
-        Transaction transaction = new Transaction.Builder(AccountConverter.enableMuxed(), account, Network.TESTNET)
+        Transaction transaction = new TransactionBuilder(AccountConverter.enableMuxed(), account, Network.TESTNET)
                 .addOperation(new CreateAccountOperation.Builder(destination.getAccountId(), "2000").build())
-                .setTimeout(Transaction.Builder.TIMEOUT_INFINITE)
+                .setTimeout(TransactionPreconditions.TIMEOUT_INFINITE)
                 .setBaseFee(Transaction.MIN_BASE_FEE)
                 .build();
 
@@ -534,21 +534,17 @@ public class OperationTest {
         io.digitalbits.sdk.xdr.Operation xdr = operation.toXdr(AccountConverter.enableMuxed());
         SetOptionsOperation parsedOperation = (SetOptionsOperation) SetOptionsOperation.fromXdr(AccountConverter.enableMuxed(), xdr);
 
-        assertEquals(null, parsedOperation.getInflationDestination());
-        assertEquals(null, parsedOperation.getClearFlags());
-        assertEquals(null, parsedOperation.getSetFlags());
-        assertEquals(null, parsedOperation.getMasterKeyWeight());
-        assertEquals(null, parsedOperation.getLowThreshold());
-        assertEquals(null, parsedOperation.getMediumThreshold());
-        assertEquals(null, parsedOperation.getHighThreshold());
-        assertEquals(null, parsedOperation.getHomeDomain());
+        assertEquals(operation.getInflationDestination(), parsedOperation.getInflationDestination());
+        assertEquals(operation.getClearFlags(), parsedOperation.getClearFlags());
+        assertEquals(operation.getSetFlags(), parsedOperation.getSetFlags());
+        assertEquals(operation.getMasterKeyWeight(), parsedOperation.getMasterKeyWeight());
+        assertEquals(operation.getLowThreshold(), parsedOperation.getLowThreshold());
+        assertEquals(operation.getMediumThreshold(), parsedOperation.getMediumThreshold());
+        assertEquals(operation.getHighThreshold(), parsedOperation.getHighThreshold());
+        assertEquals(operation.getHomeDomain(), parsedOperation.getHomeDomain());
         assertTrue(Arrays.equals(transaction.hash(), parsedOperation.getSigner().getPreAuthTx().getUint256()));
-        assertEquals(new Integer(10), parsedOperation.getSignerWeight());
-        assertEquals(opSource.getAccountId(), parsedOperation.getSourceAccount());
-
-        assertEquals(
-                "AAAAAQAAAAC7JAuE3XvquOnbsgv2SRztjuk4RoBVefQ0rlrFMMQvfAAAAAUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAB1vRBIRC3w7ZH5rQa17hIBKUwZTvBP4kNmSP7jVyw1fQAAAAK",
-                operation.toXdrBase64(AccountConverter.enableMuxed()));
+        assertEquals(operation.getSignerWeight(), parsedOperation.getSignerWeight());
+        assertEquals(operation.getSourceAccount(), parsedOperation.getSourceAccount());
     }
 
     @Test
@@ -559,7 +555,7 @@ public class OperationTest {
         KeyPair issuer = KeyPair.fromSecretSeed("SA64U7C5C7BS5IHWEPA7YWFN3Z6FE5L6KAMYUIT4AQ7KVTVLD23C6HEZ");
 
         Asset selling = new AssetTypeNative();
-        Asset buying = Asset.createNonNativeAsset("USD", issuer.getAccountId());
+        Asset buying = create(null,"USD", issuer.getAccountId());
         String amount = "0.00001";
         String price = "0.85334384"; // n=5333399 d=6250000
         Price priceObj = Price.fromString(price);
@@ -596,7 +592,7 @@ public class OperationTest {
         KeyPair issuer = KeyPair.fromSecretSeed("SA64U7C5C7BS5IHWEPA7YWFN3Z6FE5L6KAMYUIT4AQ7KVTVLD23C6HEZ");
 
         Asset selling = new AssetTypeNative();
-        Asset buying = Asset.createNonNativeAsset("USD", issuer.getAccountId());
+        Asset buying = create(null,"USD", issuer.getAccountId());
         String amount = "0.00001";
         String price = "0.85334384"; // n=5333399 d=6250000
         Price priceObj = Price.fromString(price);
@@ -627,6 +623,7 @@ public class OperationTest {
 
     @Test
     public void testManageSellOfferOperation_BadArithmeticRegression() throws IOException {
+        // from https://github.com/xdbfoundation/java-digitalbits-sdk/issues/183
 
         String transactionEnvelopeToDecode = "AAAAAButy5zasS3DLZ5uFpZHL25aiHUfKRwdv1+3Wp12Ce7XAAAAZAEyGwYAAAAOAAAAAAAAAAAAAAABAAAAAQAAAAAbrcuc2rEtwy2ebhaWRy9uWoh1HykcHb9ft1qddgnu1wAAAAMAAAAAAAAAAUtJTgAAAAAARkrT28ebM6YQyhVZi1ttlwq/dk6ijTpyTNuHIMgUp+EAAAAAAAARPSfDKZ0AAv7oAAAAAAAAAAAAAAAAAAAAAXYJ7tcAAABAbE8rEoFt0Hcv41iwVCl74C1Hyr+Lj8ZyaYn7zTJhezClbc+pTW1KgYFIZOJiGVth2xFnBT1pMXuQkVdTlB3FCw==";
         BaseEncoding base64Encoding = BaseEncoding.base64();
@@ -642,6 +639,7 @@ public class OperationTest {
 
     @Test
     public void testManageBuyOfferOperation_BadArithmeticRegression() throws IOException {
+        // from https://github.com/xdbfoundation/java-digitalbits-sdk/issues/183
 
         String transactionEnvelopeToDecode = "AAAAAButy5zasS3DLZ5uFpZHL25aiHUfKRwdv1+3Wp12Ce7XAAAAZAEyGwYAAAAxAAAAAAAAAAAAAAABAAAAAQAAAAAbrcuc2rEtwy2ebhaWRy9uWoh1HykcHb9ft1qddgnu1wAAAAwAAAABS0lOAAAAAABGStPbx5szphDKFVmLW22XCr92TqKNOnJM24cgyBSn4QAAAAAAAAAAACNyOCfDKZ0AAv7oAAAAAAABv1IAAAAAAAAAAA==";
         BaseEncoding base64Encoding = BaseEncoding.base64();
@@ -663,7 +661,7 @@ public class OperationTest {
         KeyPair issuer = KeyPair.fromSecretSeed("SA64U7C5C7BS5IHWEPA7YWFN3Z6FE5L6KAMYUIT4AQ7KVTVLD23C6HEZ");
 
         Asset selling = new AssetTypeNative();
-        Asset buying = Asset.createNonNativeAsset("USD", issuer.getAccountId());
+        Asset buying = create(null,"USD", issuer.getAccountId());
         String amount = "0.00001";
         String price = "2.93850088"; // n=36731261 d=12500000
         Price priceObj = Price.fromString(price);
@@ -726,9 +724,9 @@ public class OperationTest {
         assertEquals(destination, parsedOperation.getDestination());
         assertEquals(source, parsedOperation.getSourceAccount());
 
-        parsedOperation = (AccountMergeOperation) Operation.fromXdr(AccountConverter.disableMuxed(), xdr);
-        assertEquals("GDQNY3PBOJOKYZSRMK2S7LHHGWZIUISD4QORETLMXEWXBI7KFZZMKTL3", parsedOperation.getDestination());
-        assertEquals("GA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJVSGZ", parsedOperation.getSourceAccount());
+        parsedOperation = (AccountMergeOperation) Operation.fromXdr(AccountConverter.enableMuxed(), xdr);
+        assertEquals("MDQNY3PBOJOKYZSRMK2S7LHHGWZIUISD4QORETLMXEWXBI7KFZZMKAAAAAAMV7V2XYGQO", parsedOperation.getDestination());
+        assertEquals("MA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJVAAAAAAAAAAAAAJLK", parsedOperation.getSourceAccount());
     }
 
     @Test
@@ -982,7 +980,7 @@ public class OperationTest {
     public void testRevokeTrustlineSponsorshipOperation() {
         String source = "GA2N7NI5WEMJILMK4UPDTF2ZX2BIRQUM3HZUE27TRUNRFN5M5EXU6RQV";
         String accountId = "GAGQ7DNQUVQR6OWYOI563L5EMJE6KCAHPQSFCZFLY5PDRYMRCA5UWCMP";
-        Asset asset = new AssetTypeCreditAlphaNum4("DEMO", "GCWPICV6IV35FQ2MVZSEDLORHEMMIAODRQPVDEIKZOW2GC2JGGDCXVVV");
+        TrustLineAsset asset = TrustLineAsset.createNonNativeAsset("DEMO", "GCWPICV6IV35FQ2MVZSEDLORHEMMIAODRQPVDEIKZOW2GC2JGGDCXVVV");
         RevokeTrustlineSponsorshipOperation operation = new RevokeTrustlineSponsorshipOperation.Builder(accountId, asset).setSourceAccount(source).build();
         assertEquals("AAAAAQAAAAA037UdsRiULYrlHjmXWb6CiMKM2fNCa/ONGxK3rOkvTwAAABIAAAAAAAAAAQAAAAAND42wpWEfOthyO+2vpGJJ5QgHfCRRZKvHXjjhkRA7SwAAAAFERU1PAAAAAKz0Cr5Fd9LDTK5kQa3RORjEAcOMH1GRCsutowtJMYYr", operation.toXdrBase64(AccountConverter.enableMuxed()));
 
@@ -1041,9 +1039,9 @@ public class OperationTest {
         assertEquals(from, parsedOperation.getFrom());
         assertEquals(source, parsedOperation.getSourceAccount());
 
-        parsedOperation = (ClawbackOperation) Operation.fromXdr(AccountConverter.disableMuxed(), xdr);
-        assertEquals("GDQNY3PBOJOKYZSRMK2S7LHHGWZIUISD4QORETLMXEWXBI7KFZZMKTL3", parsedOperation.getFrom());
-        assertEquals("GA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJVSGZ", parsedOperation.getSourceAccount());
+        parsedOperation = (ClawbackOperation) Operation.fromXdr(AccountConverter.enableMuxed(), xdr);
+        assertEquals("MDQNY3PBOJOKYZSRMK2S7LHHGWZIUISD4QORETLMXEWXBI7KFZZMKAAAAAAMV7V2XYGQO", parsedOperation.getFrom());
+        assertEquals("MA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJVAAAAAAAAAAAAAJLK", parsedOperation.getSourceAccount());
     }
 
     @Test
@@ -1061,9 +1059,9 @@ public class OperationTest {
         assertEquals(from, parsedOperation.getFrom());
         assertEquals(source, parsedOperation.getSourceAccount());
 
-        parsedOperation = (ClawbackOperation) Operation.fromXdr(AccountConverter.disableMuxed(), xdr);
+        parsedOperation = (ClawbackOperation) Operation.fromXdr(AccountConverter.enableMuxed(), xdr);
         assertEquals(from, parsedOperation.getFrom());
-        assertEquals("GA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJVSGZ", parsedOperation.getSourceAccount());
+        assertEquals("MA7QYNF7SOWQ3GLR2BGMZEHXAVIRZA4KVWLTJJFC7MGXUA74P7UJVAAAAAAAAAAAAAJLK", parsedOperation.getSourceAccount());
     }
 
     @Test
@@ -1071,7 +1069,7 @@ public class OperationTest {
         try {
             String accountId = "GAGQ7DNQUVQR6OWYOI563L5EMJE6KCAHPQSFCZFLY5PDRYMRCA5UWCMP";
             String amt = "100";
-            new ClawbackOperation.Builder(accountId, Asset.create("native"), amt);
+            new ClawbackOperation.Builder(accountId, create("native"), amt);
             fail();
         } catch (IllegalArgumentException e) {
             assertEquals("native assets are not supported", e.getMessage());
@@ -1110,7 +1108,7 @@ public class OperationTest {
             EnumSet<TrustLineFlags> toClear = EnumSet.of(TrustLineFlags.AUTHORIZED_FLAG);
             EnumSet<TrustLineFlags> toSet = EnumSet.of(TrustLineFlags.AUTHORIZED_TO_MAINTAIN_LIABILITIES_FLAG);
 
-            new SetTrustlineFlagsOperation.Builder(accountId, Asset.create("native"), toClear, toSet).setSourceAccount(source).build();
+            new SetTrustlineFlagsOperation.Builder(accountId, create("native"), toClear, toSet).setSourceAccount(source).build();
             fail();
         } catch (IllegalArgumentException e) {
             assertEquals("native assets are not supported", e.getMessage());

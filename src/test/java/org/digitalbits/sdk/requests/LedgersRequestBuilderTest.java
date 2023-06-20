@@ -9,7 +9,7 @@ import static org.junit.Assert.assertEquals;
 
 public class LedgersRequestBuilderTest {
   @Test
-  public void testAccounts() {
+  public void testLedgers() {
     Server server = new Server("https://frontier.testnet.digitalbits.io");
     HttpUrl uri = server.ledgers()
             .limit(200)
