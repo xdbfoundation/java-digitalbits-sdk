@@ -37,5 +37,5 @@ java-digitalbits-sdk is licensed under an Apache-2.0 license. See the [LICENSE](
 ## xdr to jave code generation
 All the java source files in io.digitalbits.sdk.xdr package are generated using the `xdrgen` command from the [digitalbits/xdrgen](https://github.com/xdbfoundation/xdrgen) 
 ```
-xdrgen -o ./src/main/java/org/digitalbits/sdk/xdr -l java -n io.digitalbits.sdk.xdr ./xdr/DigitalBits-types.x ./xdr/DigitalBits-SCP.x ./xdr/DigitalBits-overlay.x ./xdr/DigitalBits-ledger-entries.x ./xdr/DigitalBits-ledger.x ./xdr/DigitalBits-transaction.x
+xdrgen -o ./src/main/java/io/digitalbits/sdk/xdr -l java -n io.digitalbits.sdk.xdr ./xdr/DigitalBits-types.x ./xdr/DigitalBits-SCP.x ./xdr/DigitalBits-overlay.x ./xdr/DigitalBits-ledger-entries.x ./xdr/DigitalBits-ledger.x ./xdr/DigitalBits-transaction.x
 ```
