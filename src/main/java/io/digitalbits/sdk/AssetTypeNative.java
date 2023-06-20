@@ -3,7 +3,7 @@ package io.digitalbits.sdk;
 import io.digitalbits.sdk.xdr.AssetType;
 
 /**
- * Represents DigitalBits native asset - <a href="https://developers.digitalbits.io/guides/concepts/assets.html" target="_blank">lumens (XLM)</a>
+ * Represents DigitalBits native asset - <a href="https://developers.digitalbits.io/guides/concepts/assets.html" target="_blank">lumens (XDB)</a>
  * @see <a href="https://developers.digitalbits.io/guides/concepts/assets.html" target="_blank">Assets</a>
  */
 public final class AssetTypeNative extends Asset {

@@ -22,7 +22,7 @@ public class CreateAccountOperation extends Operation {
   }
 
   /**
-   * Amount of XLM to send to the newly created account.
+   * Amount of XDB to send to the newly created account.
    */
   public String getStartingBalance() {
     return startingBalance;

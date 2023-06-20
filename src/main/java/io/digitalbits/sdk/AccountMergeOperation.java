@@ -19,7 +19,7 @@ public class AccountMergeOperation extends Operation {
     }
 
     /**
-     * The account that receives the remaining XLM balance of the source account.
+     * The account that receives the remaining XDB balance of the source account.
      */
     public String getDestination() {
         return destination;
@@ -48,7 +48,7 @@ public class AccountMergeOperation extends Operation {
 
         /**
          * Creates a new AccountMerge builder.
-         * @param destination The account that receives the remaining XLM balance of the source account.
+         * @param destination The account that receives the remaining XDB balance of the source account.
          */
         public Builder(String destination) {
             this.destination = destination;

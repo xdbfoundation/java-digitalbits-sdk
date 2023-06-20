@@ -16,7 +16,7 @@ import static io.digitalbits.sdk.Asset.create;
  * Created by andrewrogers on 7/1/15.
  */
 public class AssetTest {
-  Asset xlm = create("native");
+  Asset xdb = create("native");
 
   @Test
   public void testAssetTypeNative() {
@@ -98,7 +98,7 @@ public class AssetTest {
 			"GCEZWKCA5VLDNRLN3RPRJMRZOX3Z6G5CHCGSNFHEYVXM3XOJMDS674JZ"
 		);
 
-		assertEquals(0, xlm.compareTo(xlm));
+		assertEquals(0, xdb.compareTo(xdb));
 		assertEquals(0, assetA.compareTo(assetA));
 		assertEquals(0, assetB.compareTo(assetB));
   }
@@ -114,15 +114,15 @@ public class AssetTest {
 			"GB7TAYRUZGE6TVT7NHP5SMIZRNQA6PLM423EYISAOAP3MKYIQMVYP2JO"
 		);
 
-		assertEquals(0, xlm.compareTo(xlm));
-		assertEquals(-1, xlm.compareTo(anum4));
-		assertEquals(-1, xlm.compareTo(anum12));
+		assertEquals(0, xdb.compareTo(xdb));
+		assertEquals(-1, xdb.compareTo(anum4));
+		assertEquals(-1, xdb.compareTo(anum12));
 
-		assertEquals(1, anum4.compareTo(xlm));
+		assertEquals(1, anum4.compareTo(xdb));
 		assertEquals(0, anum4.compareTo(anum4));
 		assertEquals(-1, anum4.compareTo(anum12));
 
-		assertEquals(1, anum12.compareTo(xlm));
+		assertEquals(1, anum12.compareTo(xdb));
 		assertEquals(1, anum12.compareTo(anum4));
 		assertEquals(0, anum12.compareTo(anum12));
   }

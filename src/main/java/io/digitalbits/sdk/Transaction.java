@@ -102,7 +102,7 @@ public class Transaction extends AbstractTransaction {
   }
 
   /**
-   * Returns fee paid for transaction in stroops (1 stroop = 0.0000001 XLM).
+   * Returns fee paid for transaction in nibbs (1 nibb = 0.0000001 XDB).
    */
   public long getFee() {
     return mFee;

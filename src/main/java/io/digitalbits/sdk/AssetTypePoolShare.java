@@ -3,7 +3,7 @@ package io.digitalbits.sdk;
 import com.google.common.base.Objects;
 
 /**
- * Represents DigitalBits liquidity pool share asset - <a href="https://developers.digitalbits.io/docs/glossary/liquidity-pool/#trustlines" target="_blank">nibbs (XLM)</a>
+ * Represents DigitalBits liquidity pool share asset - <a href="https://developers.digitalbits.io/docs/glossary/liquidity-pool/#trustlines" target="_blank">nibbs (XDB)</a>
  * @see <a href="https://developers.digitalbits.io/docs/glossary/liquidity-pool/#trustlines" target="_blank">Assets</a>
  */
 public final class AssetTypePoolShare extends Asset {

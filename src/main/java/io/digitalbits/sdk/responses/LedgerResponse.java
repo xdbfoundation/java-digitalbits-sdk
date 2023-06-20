@@ -35,10 +35,10 @@ public class LedgerResponse extends Response implements Pageable {
   private final Long baseFee;
   @SerializedName("base_reserve")
   private final String baseReserve;
-  @SerializedName("base_fee_in_stroops")
-  private final String baseFeeInStroops;
-  @SerializedName("base_reserve_in_stroops")
-  private final String baseReserveInStroops;
+  @SerializedName("base_fee_in_nibbs")
+  private final String baseFeeInNibbs;
+  @SerializedName("base_reserve_in_nibbs")
+  private final String baseReserveInNibbs;
   @SerializedName("max_tx_set_size")
   private final Integer maxTxSetSize;
   @SerializedName("protocol_version")
@@ -48,7 +48,7 @@ public class LedgerResponse extends Response implements Pageable {
   @SerializedName("_links")
   private final Links links;
 
-  LedgerResponse(Long sequence, String hash, String pagingToken, String prevHash, Integer transactionCount, Integer successfulTransactionCount, Integer failedTransactionCount, Integer operationCount, String closedAt, String totalCoins, String feePool, Long baseFee, String baseReserve, String baseFeeInStroops, String baseReserveInStroops, Integer maxTxSetSize, Integer protocolVersion, String headerXdr, Links links) {
+  LedgerResponse(Long sequence, String hash, String pagingToken, String prevHash, Integer transactionCount, Integer successfulTransactionCount, Integer failedTransactionCount, Integer operationCount, String closedAt, String totalCoins, String feePool, Long baseFee, String baseReserve, String baseFeeInNibbs, String baseReserveInNibbs, Integer maxTxSetSize, Integer protocolVersion, String headerXdr, Links links) {
     this.sequence = sequence;
     this.hash = hash;
     this.pagingToken = pagingToken;
@@ -61,9 +61,9 @@ public class LedgerResponse extends Response implements Pageable {
     this.totalCoins = totalCoins;
     this.feePool = feePool;
     this.baseFee = baseFee;
-    this.baseFeeInStroops = baseFeeInStroops;
+    this.baseFeeInNibbs = baseFeeInNibbs;
     this.baseReserve = baseReserve;
-    this.baseReserveInStroops = baseReserveInStroops;
+    this.baseReserveInNibbs = baseReserveInNibbs;
     this.maxTxSetSize = maxTxSetSize;
     this.protocolVersion = protocolVersion;
     this.headerXdr = headerXdr;
@@ -125,12 +125,12 @@ public class LedgerResponse extends Response implements Pageable {
     return baseReserve;
   }
 
-  public String getBaseFeeInStroops() {
-    return baseFeeInStroops;
+  public String getBaseFeeInNibbs() {
+    return baseFeeInNibbs;
   }
 
-  public String getBaseReserveInStroops() {
-    return baseReserveInStroops;
+  public String getBaseReserveInNibbs() {
+    return baseReserveInNibbs;
   }
 
   public Integer getMaxTxSetSize() {
